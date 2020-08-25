@@ -1,0 +1,24 @@
+<%- include('./components/navbar.ejs') %>
+<div style="text-align: center;padding:5% 18%;background-color:white;height: 100%;width:100%;">
+    <img style="border-radius: 100%; height:100px;width: 100px;" src="<%= userInfo.photo %>"/>
+    <div  style="padding-top:5%;">
+        <table class="table">
+                <tbody>
+                    <tr>
+                        <th scope="row">Name</th>
+                        <td><%= userInfo.username %></td>
+                    </tr>
+                    <tr>
+                            <th scope="row">email</th>
+                            <td><%= userInfo.email %></td>
+                    </tr>
+                    <tr>
+                    <th scope="row">Prime Member </th>
+                        <td><%= userInfo.isPrime %></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+
+</div>
+<%- include('./components/footer.ejs') %>
