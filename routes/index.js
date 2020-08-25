@@ -9,6 +9,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 const mongoose = require("mongoose");
+const multer  = require('multer');
 
 
 
@@ -86,27 +87,67 @@ router.get('/auth/google/home',
 router.get('/', function(req, res, next) {
     if (req.isAuthenticated()) {
       const userInfo = req.user;
-      res.render('home', 
-        { 
+      if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+        res.render('home', 
+        { admin:true,
           user:true,
-          userInfo,
+          userInfo:userInfo,
         });
+      }else{
+        res.render('home', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+        });
+      }
     } else {
-      res.render('home', { user:false });
+      res.render('home', { user:false,userInfo:'',admin:false });
     }
 });
 router.get('/userAccount',function(req,res){
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    res.render('userAccount', 
-      { 
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('userAccount', 
+      { admin:true,
         user:true,
-        userInfo,
+        userInfo:userInfo,
       });
+    }else{
+      res.render('userAccount', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+      });
+    }
   } else {
     res.redirect("/");
   }
 })
+
+router.get("/admin",async function(req,res){
+  // if (req.isAuthenticated()) {
+  //   const userInfo = req.user;
+  //   res.render('admin', 
+  //     { 
+       
+  //     });
+  // } else {
+  //   res.redirect("/");
+  // }
+  var UserData =  User.find({});
+  UserData.exec(function(err,data){
+    if(err) throw err;
+    console.log(data);
+    res.render('admin',{data:data});
+  })
+  
+})
+
+
+
+
+
 router.get("/login", (req, res) => {
   res.redirect('/');
 });

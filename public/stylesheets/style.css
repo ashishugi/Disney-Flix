@@ -112,7 +112,9 @@ nav ul li{
 /* Carousel Items */
 .carousel-images {
   width:50%;
-  height:420px;
+  /* 420px */
+  height:58vh; 
+  object-fit: cover;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -121,8 +123,8 @@ nav ul li{
   padding-bottom: 2%;
 }
 .carousel-item{
-  padding-left:5%;
-  padding-right: 5%; 
+  padding-left:3%;
+  padding-right: 3%; 
 }
 .padding-0{
   padding-right:0;
@@ -144,4 +146,32 @@ nav ul li{
   padding-right: 2%;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   line-height: 23px;
+}
+
+/* multi cCrouselWrapper */
+.multiCarouselWrapper{
+  padding-left:3%;
+}
+.card{
+  width: 100%;
+  border: 0px;
+  border-radius: 7px;
+}
+.multi-carousel-card{
+  height:80%;
+  width: 100%;
+  border: 0px;
+  
+}
+.multi-carousel-card img  {
+  border-radius: 7px;
+}
+.card-body{
+  padding:0;
+  height: 150px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+.multi-carousel-slide-button{
+  color: white;
 }

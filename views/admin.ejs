@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+   <link rel="stylesheet" href="/stylesheets/admin.css"/>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container user-details">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h1>Add Video</h1>
+                <form class="form">
+                   <div class="form-group">
+                        <label>Name</label>
+                        <input  class="form-control" type="text" name="name"/>
+                   </div>
+                   <div class="form-group">
+                        <label>Title</label>
+                        <input  class="form-control" type="text" name="title"/>
+                   </div>
+                   <div class="form-group">
+                        <label>Add video Link</label>
+                        <input  class="form-control" type="text" name="link"/>
+                   </div>
+                   <div class="form-group">
+                        <label for="inputState">Type Of Video</label>
+                         <select id="inputState" class="form-control">
+                        <option selected>Prime</option>
+                        <option>NonPrime</option>
+                        </select>
+                   </div>
+                   <div class="form-group">
+                        <label for="inputState">Category</label>
+                         <select id="inputState" class="form-control">
+                        <option selected>Movies</option>
+                        <option>Sports</option>
+                        <option>News</option>
+                        <option>Cartoons</option>
+                        </select>
+                   </div>
+                    <div class="form-group">
+                            <label for="inputState">Genres</label>
+                            <select id="inputState" class="form-control">
+                                    <option selected>Comedy</option>
+                                    <option>Horror</option>
+                                    <option>Action</option>
+                                    <option>Romance</option>
+                                    <option>Crime</option>
+                                    <option>None</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                            <label>Short Description</label>
+                            <input  class="form-control" type="text" name="shortDescription"/>
+                    </div>
+                    <div class="form-group">
+                            <label>Long Description</label>
+                            <textarea  class="form-control" type="text" name="LongDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                            <label for="exampleFormControlFile1">Select Image (.jpg/.png )</label>
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                    <table class="table">
+                            <thead  class="thead-dark">
+                              <tr>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Prime Member</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <% data.forEach(function(item){%>
+                                    <tr>
+                                        <td><%= item.username %> </td>
+                                        <td><%= item.email %></td>
+                                        <td><%= item.isPrime %></td>
+                                    </tr>
+                                <%}); %>
+                            </tbody>
+                        </table>
+            </div>
+        </div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+</body>
+</html>
