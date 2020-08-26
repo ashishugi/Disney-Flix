@@ -103,11 +103,12 @@ router.get('/auth/google/home',
 
 /* GET home page. */
 router.get('/',async function(req, res, next) {
-  var moviesData =await  movieModel.find({category:"movies"}).exec();
-  var sportsData =await  movieModel.find({category:"sports"}).exec();
-  var newsData   =await  movieModel.find({category:"news"}).exec();
-  var cartoonsData=await  movieModel.find({category:"cartoons"}).exec();
-  var carouselData = await movieModel.find({}).limit(5).exec();
+  var moviesData =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).limit(10).exec();
+  var sportsData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(10).exec();
+  var newsData   =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(10).exec();
+  var cartoonsData=await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(10).exec();
+  var len =await moviesData.length;
+  var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
   if (req.isAuthenticated()) {
     var userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
@@ -152,10 +153,29 @@ router.get('/',async function(req, res, next) {
 router.get('/home/:path', async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
-  if(data.length > 0){
-    res.render('playvideo',{data:data});
-  }else{
-    res.redirect('/');
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('playvideo', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data:data,
+      });
+    }else{
+      res.render('playvideo', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data:data
+      });
+    }
+  } else {
+    res.render("playvideo",{ admin:true,
+      user:false,
+      userInfo:'',
+      data:data,
+    });
   }
 })
 
@@ -236,6 +256,262 @@ router.post('/addProduct',upload.single('imagePath'),function(req,res){
     });
     res.redirect('/admin');
 })
+/*************************  /movies *************************/
+router.get('/movies',async function(req,res){
+  var moviesData =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
+  var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('navbarTabPages', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }else{
+      res.render('navbarTabPages', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }
+  } else {
+    res.render("navbarTabPages",
+    {
+      admin:false,
+      user:false,
+      userInfo:'',
+      data : moviesData,
+      carouselData:carouselData,
+    }
+    );
+  }
+})
+router.get('/movies/:path',async function(req,res){
+  const path = req.params.path;
+  const data = await movieModel.find({ path: path });
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('playvideo', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data:data,
+      });
+    }else{
+      res.render('playvideo', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data:data
+      });
+    }
+  } else {
+    res.render("playvideo",{ admin:true,
+      user:false,
+      userInfo:'',
+      data:data,
+    });
+  }
+});
+
+/*************************  /sports *************************/
+router.get('/sports',async function(req,res){
+  var moviesData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
+  var carouselData = await movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(5).exec();
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('navbarTabPages', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }else{
+      res.render('navbarTabPages', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }
+  } else {
+    res.render("navbarTabPages",
+    {
+      admin:false,
+      user:false,
+      userInfo:'',
+      data : moviesData,
+      carouselData:carouselData,
+    }
+    );
+  }
+})
+router.get('/movies/:path',async function(req,res){
+  const path = req.params.path;
+  const data = await movieModel.find({ path: path });
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('playvideo', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data:data,
+      });
+    }else{
+      res.render('playvideo', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data:data
+      });
+    }
+  } else {
+    res.render("playvideo",{ admin:true,
+      user:false,
+      userInfo:'',
+      data:data,
+    });
+  }
+});
+
+
+/*************************  /news *************************/
+router.get('/news',async function(req,res){
+  var moviesData =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
+  var carouselData = await movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(5).exec();
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('navbarTabPages', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }else{
+      res.render('navbarTabPages', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }
+  } else {
+    res.render("navbarTabPages",
+    {
+      admin:false,
+      user:false,
+      userInfo:'',
+      data : moviesData,
+      carouselData:carouselData,
+    }
+    );
+  }
+})
+router.get('/news/:path',async function(req,res){
+  const path = req.params.path;
+  const data = await movieModel.find({ path: path });
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('playvideo', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data:data,
+      });
+    }else{
+      res.render('playvideo', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data:data
+      });
+    }
+  } else {
+    res.render("playvideo",{ admin:true,
+      user:false,
+      userInfo:'',
+      data:data,
+    });
+  }
+});
+
+/*************************  /kids *************************/
+router.get('/kids',async function(req,res){
+  var moviesData =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
+  var carouselData = await movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(5).exec();
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('navbarTabPages', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }else{
+      res.render('navbarTabPages', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data : moviesData,
+        carouselData:carouselData,
+      });
+    }
+  } else {
+    res.render("navbarTabPages",
+    {
+      admin:false,
+      user:false,
+      userInfo:'',
+      data : moviesData,
+      carouselData:carouselData,
+    }
+    );
+  }
+})
+router.get('/news/:path',async function(req,res){
+  const path = req.params.path;
+  const data = await movieModel.find({ path: path });
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('playvideo', 
+      { admin:true,
+        user:true,
+        userInfo:userInfo,
+        data:data,
+      });
+    }else{
+      res.render('playvideo', 
+      { admin:false,
+        user:true,
+        userInfo:userInfo,
+        data:data
+      });
+    }
+  } else {
+    res.render("playvideo",{ admin:true,
+      user:false,
+      userInfo:'',
+      data:data,
+    });
+  }
+});
 
 
 router.get("/login", (req, res) => {

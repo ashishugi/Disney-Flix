@@ -1,0 +1,10 @@
+<div class="container">
+        <h5 style="color: white;font-weight: 600"><%= title%></h5>
+    <div class="row">
+        <% data.forEach(function(item){%>
+            <div class="col-md-2 col-sm-12 movie-cards" >
+                    <a href="/movies/<%= item.path %>" class="movie-card-images"><img style="width: 100%;height: 150px;border-radius:10px " src="<%= item.imageUrl %>" alt="" /></a>
+            </div>
+        <%}) %>
+    </div>
+</div>

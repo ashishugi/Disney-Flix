@@ -1,5 +1,6 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  /* padding-top:65px; */
   background-color: #0b101b;
 }
 
@@ -7,13 +8,13 @@ body {
 nav{
   background-color:#131a26;
   text-align: center;
+  position: fixed;
 }
 .navbar{
   padding-left:7%;
   padding-right:5%;
   padding-top:1.5%;
   padding-bottom:1.5%;
-  overflow: auto;
   text-align: center;
 }
 .navbar-light .navbar-brand{
@@ -25,7 +26,7 @@ nav{
 
 /* Footer */
 footer {
-  position: relative;;
+  /* position: absolute; */
   bottom:0;
   width:100%;
   /* height:10px;   Height of the footer */
@@ -113,8 +114,8 @@ nav ul li{
 .carousel-images {
   width:50%;
   /* 420px */
-  height:58vh; 
-  object-fit: cover;
+  height:420px; 
+  /* object-fit: cover; */
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -151,6 +152,7 @@ nav ul li{
 /* multi CarouselWrapper */
 .multiCarouselWrapper{
   padding-left:3%;
+  height: 100%;
 }
 .card{
   width: 100%;
@@ -174,4 +176,15 @@ nav ul li{
 }
 .multi-carousel-slide-button{
   color: white;
+}
+
+/* Movie Cards */
+.movie-cards{
+  border-radius: 10px;
+  padding-top:2%;
+  padding-bottom: 2%;
+}
+
+.movie-card-images:hover{
+  opacity: 0.4;
 }

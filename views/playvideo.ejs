@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <%= data %>
-</body>
-</html>
+<%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
+<div class="" style="padding-top:0%; border:0;">
+      <iframe width="100%" height="520px" src="<%= data[0].movieUrl%>">
+          
+      </iframe>
+</div>
+<div class="" style="padding-left:3%;padding-top:2%;padding-right:3%;">
+        <h3 style="color: white;font-weight: 700;"><%= data[0].movieName  %></h3>
+        <h6 style="color: #3d7ce0 ;text-transform:capitalize;"><%= data[0].category  %></h6>
+        <p style="font-size:120% ;color:#95c6d0;font-weight: 100;line-height: 32px"><%= data[0].longDesc  %></p>
+</div>
+<%- include("./components/footer") %>
