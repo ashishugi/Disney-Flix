@@ -1,7 +1,11 @@
 
 
     <%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
-    <%- include('./components/carousel.ejs') %>
-    <%- include('./components/muticarousel.ejs') %>
+    <%- include('./components/carousel.ejs',{carouselData:carouselData}) %>
+
+    <%- include('./components/muticarousel.ejs',{title:"Specials & Latest Movies" ,data:moviesData}) %>
+    <%- include('./components/muticarousel.ejs',{title:"Best In Sports" ,data:sportsData}) %>
+    <%- include('./components/muticarousel.ejs',{title:"Live News" ,data:newsData}) %>
+    <%- include('./components/muticarousel.ejs',{title:"Animated Adventure" ,data:cartoonsData}) %>
     <p>Welcome to </p>
     <%- include("./components/footer") %>

@@ -13,11 +13,7 @@
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <h1>Add Video</h1>
-                <form class="form">
-                   <div class="form-group">
-                        <label>Name</label>
-                        <input  class="form-control" type="text" name="name"/>
-                   </div>
+                <form class="form" action="/addProduct" method="POST" enctype="multipart/form-data">
                    <div class="form-group">
                         <label>Title</label>
                         <input  class="form-control" type="text" name="title"/>
@@ -28,43 +24,49 @@
                    </div>
                    <div class="form-group">
                         <label for="inputState">Type Of Video</label>
-                         <select id="inputState" class="form-control">
-                        <option selected>Prime</option>
-                        <option>NonPrime</option>
+                         <select id="inputState" class="form-control" name="isPrime">
+                        <option selected value=true>Prime</option>
+                        <option value=false>NonPrime</option>
                         </select>
                    </div>
                    <div class="form-group">
                         <label for="inputState">Category</label>
-                         <select id="inputState" class="form-control">
-                        <option selected>Movies</option>
-                        <option>Sports</option>
-                        <option>News</option>
-                        <option>Cartoons</option>
+                         <select id="inputState" class="form-control" name="category">
+                        <option selected value="movies">Movies</option>
+                        <option value="sports">Sports</option>
+                        <option value="news">News</option>
+                        <option value="cartoons">Cartoons</option>
                         </select>
                    </div>
                     <div class="form-group">
                             <label for="inputState">Genres</label>
-                            <select id="inputState" class="form-control">
-                                    <option selected>Comedy</option>
-                                    <option>Horror</option>
-                                    <option>Action</option>
-                                    <option>Romance</option>
-                                    <option>Crime</option>
-                                    <option>None</option>
+                            <select id="inputState" class="form-control" name="genre">
+                                    <option selected value="comedy">Comedy</option>
+                                    <option value="horror">Horror</option>
+                                    <option value="action">Action</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="crime">Crime</option>
+                                    <option value="thrill">Thrill</option>
+                                    <option value="drama">Drama</option>
+                                    <option value="mystery">Mystery</option>
+                                    <option value="political">Political</option>
+                                    <option value="social">Social</option>
+                                    <option value="none">None</option>
                             </select>
                     </div>
                     <div class="form-group">
                             <label>Short Description</label>
-                            <input  class="form-control" type="text" name="shortDescription"/>
+                            <input  class="form-control" type="text" name="shortDesc"/>
                     </div>
                     <div class="form-group">
                             <label>Long Description</label>
-                            <textarea  class="form-control" type="text" name="LongDescription"></textarea>
+                            <textarea  class="form-control" type="text" name="longDesc"></textarea>
                     </div>
                     <div class="form-group">
                             <label for="exampleFormControlFile1">Select Image (.jpg/.png )</label>
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1" name="imagePath">
                     </div>
+                    <button type="submit" class="btn btn-dark">ADD</button>
                 </form>
             </div>
             <div class="col-md-6 col-sm-12">
