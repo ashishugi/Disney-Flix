@@ -2,13 +2,15 @@
     <h5 style="color: white;font-weight: 600"><%= title%></h5>
     <div class="owl-carousel  owl-theme" style="padding-top:5px">
         <%data.forEach(function(item){%>
-          <div class="card multi-carousel-card " >
-            <div class="card-body" style="position: relative;">
-              <img src="<%= item.imageUrl %>" style="height: 150px"/>
-               <a  style="padding-bottom: -10px" href="/home/<%= item.path %>" class="card-link">Card link</a>
-              <!--<a href="#" class="card-link">Another link</a> -->
-            </div>
-          </div>
+          <a href="/home/<%= item.path %>" >
+              <div class="card multi-carousel-card " >
+                <div class="card-body" style="position: relative;">
+                  <img src="<%= item.imageUrl %>" style="height: 150px"/>
+                  <!-- <a  style="padding-bottom: -10px"  class="card-link">Card link</a> -->
+                  <!--<a href="#" class="card-link">Another link</a> -->
+                </div>
+              </div>
+          </a>
         <%})%>
     </div>
 </div>

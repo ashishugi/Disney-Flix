@@ -163,7 +163,14 @@ nav ul li{
   height:100%;
   width: 100%;
   border: 0px;
+
   
+}
+.multi-carousel-card:hover{
+  height:100%;
+  width: 100%;
+  border: 0px;
+  opacity: 0.4;
 }
 .multi-carousel-card img  {
   border-radius: 7px;

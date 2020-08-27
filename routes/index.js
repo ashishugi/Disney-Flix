@@ -215,6 +215,26 @@ router.get('/userAccount',async function(req,res){
   }
 })
 
+router.get('/userAccount/del/:id',async function(req,res){
+  var id = req.params.id;
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    console.log(req.user._id);
+    var userId = req.user.id;
+    await User.update({_id:userId},{$pull:{"favorites":id}}).exec(); // It deletes the string from array of string .
+    console.log(req.user);
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.redirect('back');
+    }else{
+      res.redirect('back');
+    }
+  } else {
+    res.redirect("/");
+  }
+})
+
+/************************************  Admin *******************/
+
 router.get("/admin",async function(req,res){
   // if (req.isAuthenticated()) {
   //   const userInfo = req.user;
@@ -505,7 +525,7 @@ router.get('/news/:path',async function(req,res){
 });
 
 /*************************  /kids *************************/
-router.get('/kids',async function(req,res){
+router.get('/cartoons',async function(req,res){
   var moviesData =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
   var carouselData = await movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
@@ -517,7 +537,7 @@ router.get('/kids',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
-        path:"kids",
+        path:"cartoons",
       });
     }else{
       res.render('navbarTabPages', 
@@ -526,7 +546,7 @@ router.get('/kids',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
-        path:"kids",
+        path:"cartoons",
       });
     }
   } else {
@@ -537,12 +557,12 @@ router.get('/kids',async function(req,res){
       userInfo:'',
       data : moviesData,
       carouselData:carouselData,
-      path:"kids",
+      path:"cartoons",
     }
     );
   }
 })
-router.get('/kids/:path',async function(req,res){
+router.get('/cartoons/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
