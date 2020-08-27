@@ -46,10 +46,10 @@
           </ul>
           <button style="background-color: rgb(230, 199, 23);" class="btn mr-0 mr-4" type="submit">Premium</button>
           <%if(user === true){%>
-            <button class="mr-2 login"><a href="/logout" class="login">Logout</a></button>
+            <button class="mr-4 login"><a href="/logout" class="login">Logout</a></button>
             <a href="/userAccount" class="user-icon"><img src="<%= userInfo.photo%>"/></a>
           <%}else{%>
-            <button class="mr-2 login" data-toggle="modal" data-target="#loginModel"><a>Login</a></button>
+            <button class="mr-0 login" data-toggle="modal" data-target="#loginModel"><a>Login</a></button>
           <%}%>
         </div>
       </nav>

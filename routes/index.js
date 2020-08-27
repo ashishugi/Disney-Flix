@@ -102,7 +102,7 @@ router.get('/auth/google/home',
 );
 
 
-/* GET home page. */
+/**************************** GET home page. ******************/
 router.get('/',async function(req, res, next) {
   var moviesData =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).limit(10).exec();
   var sportsData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(10).exec();
@@ -233,7 +233,7 @@ router.get('/userAccount/del/:id',async function(req,res){
   }
 })
 
-/************************************  Admin *******************/
+/************************************  Admin **************************/
 
 router.get("/admin",async function(req,res){
   // if (req.isAuthenticated()) {
@@ -252,10 +252,175 @@ router.get("/admin",async function(req,res){
   })
   
 })
+router.get('/admin/del/:id',function(req,res){
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    var id = req.params.id;
+    alert('Are you sure you want to delete this user ?');
+    var del = User.findByIdAndDelete(id); // It deletes the string from array of string .
+    del.exec(function(err,data){
+      if(err) throw err;
+    })
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.redirect('back');
+    }else{
+      res.redirect('back');
+    }
+  } else {
+    res.redirect("/");
+  }
+})
 
+router.get('/adminmovies',async function(req,res){
+  var data =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }else{
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }
+  } else {
+    res.render('adminVideoCategory',
+    {
+      title:"Movies",
+      path:'adminmovies',
+      data:data,
+    }
+    );
+  }
+})
+router.get('/admin/delVideo/:id',function(req,res){
+  console.log(req.params.id);
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    var id = req.params.id;
+    var del = movieModel.findByIdAndDelete(id); // It deletes the string from array of string .
+    del.exec(function(err,data){
+      if(err) throw err;
+    })
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.redirect('back');
+    }else{
+      res.redirect('back');
+    }
+  } else {
+    res.redirect("back");
+  }
+})
+router.get('/adminsports',async function(req,res){
+  var data =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }else{
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }
+  } else {
+    res.render('adminVideoCategory',
+    {
+      title:"Movies",
+      path:'adminmovies',
+      data:data,
+    }
+    );
+  }
+})
+router.get('/adminnews',async function(req,res){
+  var data =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }else{
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }
+  } else {
+    res.render('adminVideoCategory',
+    {
+      title:"Movies",
+      path:'adminmovies',
+      data:data,
+    }
+    );
+  }
+})
+router.get('/admincartoons',async function(req,res){
+  var data =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
+  if (req.isAuthenticated()) {
+    userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }else{
+      res.render('adminVideoCategory',
+      {
+        title:"Movies",
+        path:'adminmovies',
+        data:data,
+      }
+      );
+    }
+  } else {
+    res.render('adminVideoCategory',
+    {
+      title:"Movies",
+      path:'adminmovies',
+      data:data,
+    }
+    );
+  }
+})
+router.post('/editVideos',function(req,res){
+  console.log(req.body);
+  res.redirect('/adminmovies');
+})
 /********************************  /addProduct *******************/
 // Inserting Inside the database  movies .
 router.post('/addProduct',upload.single('imagePath'),function(req,res){
+    console.log(req.body);
     var setpath="";
     for(var i=0;i<req.body.title.length;i++){
       if(req.body.title[i]!=' '){

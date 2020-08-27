@@ -1,0 +1,28 @@
+<div class="user-details">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+                <table class="table">
+                        <thead  class="thead-dark">
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Prime Member</th>
+                            <th scope="col">Remove User</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <% data.forEach(function(item){%>
+                                <tr>
+                                    <td><img style="height:25px;width:25px;border-radius: 100%" src="<%= item.photo %>" /> </td>
+                                    <td><%= item.username %> </td>
+                                    <td><%= item.email %></td>
+                                    <td><%= item.isPrime %></td>
+                                    <td><a class="btn btn-outline-success" href="/admin/del/<%= item.id %>"><i class="far fa-trash-alt"></i></a></td>
+                                </tr>
+                            <%}); %>
+                        </tbody>
+                </table>
+        </div>
+    </div>
+</div>
