@@ -51,6 +51,7 @@ var userSchema = new mongoose.Schema({
   email:String,
   photo:String,
   isPrime:Boolean,
+  favorites:[],
   googleId:String,
   facebookId:String,
 })
@@ -155,11 +156,19 @@ router.get('/home/:path', async function(req,res){
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var addedToFavList = false;
+    var favList = req.user.favorites;
+    favList.forEach(function(item){
+      if(item == data[0]._id){
+        addedToFavList = true;
+      }
+    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data,
       });
     }else{
@@ -167,6 +176,7 @@ router.get('/home/:path', async function(req,res){
       { admin:false,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data
       });
     }
@@ -174,25 +184,30 @@ router.get('/home/:path', async function(req,res){
     res.render("playvideo",{ admin:true,
       user:false,
       userInfo:'',
+      addedToFavList:false,
       data:data,
     });
   }
 })
-
-router.get('/userAccount',function(req,res){
+/******************************* /userAccount *********************/
+router.get('/userAccount',async function(req,res){
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var favArray = req.user.favorites;
+    var favoriteData = await movieModel.find({_id:{$in:favArray}}).exec(); // Is is for fetching multiple data .
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('userAccount', 
       { admin:true,
         user:true,
         userInfo:userInfo,
+        favoriteData:favoriteData,
       });
     }else{
       res.render('userAccount', 
       { admin:false,
         user:true,
         userInfo:userInfo,
+        favoriteData,favoriteData,
       });
     }
   } else {
@@ -218,7 +233,7 @@ router.get("/admin",async function(req,res){
   
 })
 
-
+/********************************  /addProduct *******************/
 // Inserting Inside the database  movies .
 router.post('/addProduct',upload.single('imagePath'),function(req,res){
     var setpath="";
@@ -269,6 +284,7 @@ router.get('/movies',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"movies",
       });
     }else{
       res.render('navbarTabPages', 
@@ -277,6 +293,7 @@ router.get('/movies',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"movies",
       });
     }
   } else {
@@ -287,6 +304,7 @@ router.get('/movies',async function(req,res){
       userInfo:'',
       data : moviesData,
       carouselData:carouselData,
+      path:"movies",
     }
     );
   }
@@ -296,19 +314,29 @@ router.get('/movies/:path',async function(req,res){
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var addedToFavList = false;
+    var favList = req.user.favorites;
+    favList.forEach(function(item){
+      if(item == data[0]._id){
+        addedToFavList = true;
+      }
+    })
+    console.log(addedToFavList);
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         data:data,
+        addedToFavList:addedToFavList,
       });
     }else{
       res.render('playvideo', 
       { admin:false,
         user:true,
         userInfo:userInfo,
-        data:data
+        data:data,
+        addedToFavList:addedToFavList,
       });
     }
   } else {
@@ -316,6 +344,7 @@ router.get('/movies/:path',async function(req,res){
       user:false,
       userInfo:'',
       data:data,
+      addedToFavList:false,
     });
   }
 });
@@ -333,6 +362,7 @@ router.get('/sports',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"sports",
       });
     }else{
       res.render('navbarTabPages', 
@@ -341,6 +371,7 @@ router.get('/sports',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"sports",
       });
     }
   } else {
@@ -351,20 +382,29 @@ router.get('/sports',async function(req,res){
       userInfo:'',
       data : moviesData,
       carouselData:carouselData,
+      path:"sports",
     }
     );
   }
 })
-router.get('/movies/:path',async function(req,res){
+router.get('/sports/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var addedToFavList = false;
+    var favList = req.user.favorites;
+    favList.forEach(function(item){
+      if(item == data[0]._id){
+        addedToFavList = true;
+      }
+    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data,
       });
     }else{
@@ -372,6 +412,7 @@ router.get('/movies/:path',async function(req,res){
       { admin:false,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data
       });
     }
@@ -379,6 +420,7 @@ router.get('/movies/:path',async function(req,res){
     res.render("playvideo",{ admin:true,
       user:false,
       userInfo:'',
+      addedToFavList:false,
       data:data,
     });
   }
@@ -398,6 +440,7 @@ router.get('/news',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"news",
       });
     }else{
       res.render('navbarTabPages', 
@@ -406,6 +449,7 @@ router.get('/news',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"news",
       });
     }
   } else {
@@ -416,6 +460,7 @@ router.get('/news',async function(req,res){
       userInfo:'',
       data : moviesData,
       carouselData:carouselData,
+      path:"news",
     }
     );
   }
@@ -425,11 +470,19 @@ router.get('/news/:path',async function(req,res){
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var addedToFavList = false;
+    var favList = req.user.favorites;
+    favList.forEach(function(item){
+      if(item == data[0]._id){
+        addedToFavList = true;
+      }
+    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data,
       });
     }else{
@@ -437,6 +490,7 @@ router.get('/news/:path',async function(req,res){
       { admin:false,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data
       });
     }
@@ -444,6 +498,7 @@ router.get('/news/:path',async function(req,res){
     res.render("playvideo",{ admin:true,
       user:false,
       userInfo:'',
+      addedToFavList:false,
       data:data,
     });
   }
@@ -462,6 +517,7 @@ router.get('/kids',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"kids",
       });
     }else{
       res.render('navbarTabPages', 
@@ -470,6 +526,7 @@ router.get('/kids',async function(req,res){
         userInfo:userInfo,
         data : moviesData,
         carouselData:carouselData,
+        path:"kids",
       });
     }
   } else {
@@ -480,20 +537,29 @@ router.get('/kids',async function(req,res){
       userInfo:'',
       data : moviesData,
       carouselData:carouselData,
+      path:"kids",
     }
     );
   }
 })
-router.get('/news/:path',async function(req,res){
+router.get('/kids/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   if (req.isAuthenticated()) {
     const userInfo = req.user;
+    var addedToFavList = false;
+    var favList = req.user.favorites;
+    favList.forEach(function(item){
+      if(item == data[0]._id){
+        addedToFavList = true;
+      }
+    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data,
       });
     }else{
@@ -501,6 +567,7 @@ router.get('/news/:path',async function(req,res){
       { admin:false,
         user:true,
         userInfo:userInfo,
+        addedToFavList:addedToFavList,
         data:data
       });
     }
@@ -508,10 +575,35 @@ router.get('/news/:path',async function(req,res){
     res.render("playvideo",{ admin:true,
       user:false,
       userInfo:'',
+      addedToFavList:false,
       data:data,
     });
   }
 });
+
+/************************** /addfavorite **********************/
+
+router.get('/addfavorites/:id',function(req,res){
+  if (req.isAuthenticated()) {
+    const userInfo = req.user;
+    var videoId = req.params.id;
+    var id = req.user.id;
+    console.log(videoId);
+    User.findByIdAndUpdate(id,{
+      $push:{favorites:videoId}
+    },function(err,data){
+      if(err) throw err;
+    })
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      res.redirect('back');
+    }else{
+      res.redirect('back'); //this will redirect to same page.
+    }
+  } else {
+    res.redirect('/');
+  }
+})
+
 
 
 router.get("/login", (req, res) => {

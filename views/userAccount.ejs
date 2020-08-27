@@ -19,6 +19,30 @@
                 </tbody>
             </table>
     </div>
-
+</div>
+<div class="favorite-list">
+    <div class="container">
+        <h2>Favorite List</h2>
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Name </th>
+                <th scope="col">Category</th>
+                <th scope="col">View</th>
+                <th scope="col">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%favoriteData.forEach(function(item){%>
+                <tr>
+                    <td><%= item.movieName %></td>
+                    <td><%= item.category %></td>
+                    <td><button class="btn ">View</button></td>
+                    <td><button class="btn btn-outline-danger" >X</button></td>
+                  </tr>
+              <%})%>
+            </tbody>
+        </table>
+    </div>
 </div>
 <%- include('./components/footer.ejs') %>
