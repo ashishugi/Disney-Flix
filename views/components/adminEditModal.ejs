@@ -1,70 +1,75 @@
 <!-- Button trigger modal -->
       <!-- Modal -->
-      <div class="modal fade" id="e" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
-
-                             <div class="modal-body">
-                                    <form class="form" action="/editVideos" method="POST"  id="modal-details" enctype="multipart/form-data">
-                                        <div class="modal-content">
-                                            <div class="form-group">
-                                            <label>Title</label>
-                                            <input  class="form-control" type="text" name="title"/>
-                                            </div>
-                                            <div class="form-group">
-                                            <label>Add video Link</label>
-                                            <input  class="form-control" type="text" name="link"/>
-                                            </div>
-                                            <div class="form-group">
-                                            <label for="inputState">Type Of Video</label>
-                                            <select id="inputState" class="form-control" name="isPrime">
-                                            <option selected value=true>Prime</option>
-                                            <option value=false>NonPrime</option>
-                                            </select>
-                                            </div>
-                                            <div class="form-group">
-                                            <label for="inputState">Category</label>
-                                            <select id="inputState" class="form-control" name="category">
-                                            <option selected value="movies">Movies</option>
-                                            <option value="sports">Sports</option>
-                                            <option value="news">News</option>
-                                            <option value="cartoons">Cartoons</option>
-                                            </select>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label for="inputState">Genres</label>
-                                                    <select id="inputState" class="form-control" name="genre">
-                                                            <option selected value="comedy">Comedy</option>
-                                                            <option value="horror">Horror</option>
-                                                            <option value="action">Action</option>
-                                                            <option value="romance">Romance</option>
-                                                            <option value="crime">Crime</option>
-                                                            <option value="thrill">Thrill</option>
-                                                            <option value="drama">Drama</option>
-                                                            <option value="mystery">Mystery</option>
-                                                            <option value="political">Political</option>
-                                                            <option value="social">Social</option>
-                                                            <option value="none">None</option>
-                                                    </select>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label>Short Description</label>
-                                                    <input  class="form-control" type="text" name="shortDesc"/>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label>Long Description</label>
-                                                    <textarea  class="form-control" type="text" name="longDesc"></textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                                    <button type="submit"  class="btn btn-dark">ADD</button>
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            </div>
+      <div class="modal fade" id="edit<%= item.id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                        <div class="modal-body">
+                                <form class="form" action="/editVideos" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" value="<%=item.id%>" name="id"/>
+                                        <div class="form-group">
+                                        <label>Title</label>
+                                        <input  class="form-control" type="text" value="<%= item.movieName %>" name="title"/>
                                         </div>
-                                        </form>
-                            </div>
-                        
-                    </div>
-              </div>
-            </div>
+                                        <div class="form-group">
+                                        <label>Add video Link</label>
+                                        <input  class="form-control" type="text" value="<%= item.movieUrl %>" name="link"/>
+                                        </div>
+                                        <div class="form-group">
+                                        <label for="inputState">Type Of Video</label>
+                                        <select id="inputState" class="form-control" name="isPrime">
+                                        <option selected value=true>Prime</option>
+                                        <option value=false>NonPrime</option>
+                                        </select>
+                                        </div>
+                                        <div class="form-group">
+                                        <label for="inputState">Category</label>
+                                        <select id="inputState" class="form-control" name="category">
+                                        <option selected value="movies">Movies</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="news">News</option>
+                                        <option value="cartoons">Cartoons</option>
+                                        </select>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="inputState">Genres</label>
+                                                <select id="inputState" class="form-control" name="genre">
+                                                        <option selected value="comedy">Comedy</option>
+                                                        <option value="horror">Horror</option>
+                                                        <option value="action">Action</option>
+                                                        <option value="romance">Romance</option>
+                                                        <option value="crime">Crime</option>
+                                                        <option value="thrill">Thrill</option>
+                                                        <option value="drama">Drama</option>
+                                                        <option value="mystery">Mystery</option>
+                                                        <option value="political">Political</option>
+                                                        <option value="social">Social</option>
+                                                        <option value="none">None</option>
+                                                </select>
+                                        </div>
+                                        <div class="form-group">
+                                                <label>Short Description</label>
+                                                <input  class="form-control" type="text" name="shortDesc"/>
+                                        </div>
+                                        <div class="form-group">
+                                                <label>Long Description</label>
+                                                <textarea  class="form-control" type="text" name="longDesc"><%= item.longDesc %></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="exampleFormControlFile1">Previous Image Path</label>
+                                                <input type="text" class="form-control" value="<%= item.imageUrl %>" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="exampleFormControlFile1">Select Image (.jpg/.png )</label>
+                                                <input type="file" class="form-control-file" id="exampleFormControlFile1" name="imagePath">
+                                        </div>
+                                        <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                </form>
+                        </div>
+                </div>
           </div>
+        </div>
+      </div>
         

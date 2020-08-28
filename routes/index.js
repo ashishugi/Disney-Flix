@@ -12,7 +12,7 @@ const mongoose = require("mongoose");
 var multer  = require('multer')
 const  movieModel =require('../database/movies');
 
-
+/*********************************** using multer for uploading the files ***************/
 // For uploading files
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -30,7 +30,7 @@ const fileFilter = (req,file,cb)=>{
     }
 }
 var upload = multer({ storage:storage,fileFilter:fileFilter });
-
+/*******************************  maintaining Session ***************/
 router.use(session({
   secret: 'Any string can be here',
   resave: false,
@@ -39,6 +39,7 @@ router.use(session({
 router.use(passport.initialize());
 router.use(passport.session());
 
+/******************************* MondoDB  Connect and user Schema **********************/
 mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true, useUnifiedTopology: true} , function(err){
   if(err) throw err;
   console.log('connected');
@@ -56,7 +57,7 @@ var userSchema = new mongoose.Schema({
   facebookId:String,
 })
 
-/* Google Auth */
+/*************************** Google Auth ***************************/
 // var User = new userModel({});
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
@@ -413,14 +414,34 @@ router.get('/admincartoons',async function(req,res){
     );
   }
 })
-router.post('/editVideos',function(req,res){
-  console.log(req.body);
-  res.redirect('/adminmovies');
+router.post('/editVideos',upload.single('imagePath'),function(req,res){
+  var movieName = req.body.title;
+  var shortDesc = req.body.shortDesc;
+  var longDesc =req.body.longDesc;
+  var movieUrl = req.body.link;
+  var isPrime = req.body.isPrime;
+  var category = req.body.category;
+  var genre = req.body.genre;
+  var imageUrl = req.file.path;
+  imageUrl = imageUrl.substring(7);
+  var id = req.body.id;
+  movieModel.findByIdAndUpdate(id , { // updating the data base.
+      movieName:movieName,
+      shortDesc:shortDesc,
+      longDesc:longDesc,
+      movieUrl:movieUrl,
+      isPrime:isPrime,
+      genre:genre,
+      category:category,
+      imageUrl:imageUrl,
+  },function(err,data){
+    if(err) throw err;
+    res.redirect('back');
+  })
 })
 /********************************  /addProduct *******************/
 // Inserting Inside the database  movies .
 router.post('/addProduct',upload.single('imagePath'),function(req,res){
-    console.log(req.body);
     var setpath="";
     for(var i=0;i<req.body.title.length;i++){
       if(req.body.title[i]!=' '){
@@ -438,7 +459,6 @@ router.post('/addProduct',upload.single('imagePath'),function(req,res){
     var genre = req.body.genre;
     var imageUrl = req.file.path; //different way to upload a image.
     imageUrl = imageUrl.substring(7);
-    // console.log(isPrime);
     var productDetails = new movieModel({
       movieName:movieName,
       shortDesc:shortDesc,
