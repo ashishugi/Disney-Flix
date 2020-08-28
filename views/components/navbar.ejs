@@ -37,14 +37,16 @@
             <li class="nav-item">
               <a class="nav-link" href="/cartoons">Cartoons</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/admin">Admin</a>
-            </li>
-            <!-- <%if(admin){%> -->
-              
-            <!-- <%}%> -->
+            
+            <%if(admin){%>
+              <li class="nav-item">
+                <a class="nav-link" href="/admin">Admin</a>
+              </li>
+            <%}%>
           </ul>
-          <button style="background-color: rgb(230, 199, 23);" class="btn mr-0 mr-4" type="submit">Premium</button>
+          <%if(!isPrime){%>
+            <a href="/getPremium" style="background-color: rgb(230, 199, 23);" class="btn mr-0 mr-4" >Premium</a>
+          <%}%>
           <%if(user === true){%>
             <button class="mr-4 login"><a href="/logout" class="login">Logout</a></button>
             <a href="/userAccount" class="user-icon"><img src="<%= userInfo.photo%>"/></a>

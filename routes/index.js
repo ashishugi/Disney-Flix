@@ -113,6 +113,7 @@ router.get('/',async function(req, res, next) {
   var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
   if (req.isAuthenticated()) {
     var userInfo = req.user;
+    console.log(userInfo);
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('home', 
       { admin:true,
@@ -123,6 +124,7 @@ router.get('/',async function(req, res, next) {
         newsData:newsData,
         cartoonsData:cartoonsData,
         carouselData:carouselData,
+        isPrime:true,
       });
     }else{
       res.render('home', 
@@ -135,6 +137,7 @@ router.get('/',async function(req, res, next) {
         newsData:newsData,
         cartoonsData:cartoonsData,
         carouselData:carouselData,
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -148,6 +151,7 @@ router.get('/',async function(req, res, next) {
       newsData:newsData,
       cartoonsData:cartoonsData,
       carouselData:carouselData,
+      isPrime:false,
    });
   }
 });
@@ -171,23 +175,43 @@ router.get('/home/:path', async function(req,res){
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
+        isPrime:true,
       });
     }else{
-      res.render('playvideo', 
-      { admin:false,
-        user:true,
-        userInfo:userInfo,
-        addedToFavList:addedToFavList,
-        data:data
-      });
+      if(data[0].isPrime && req.user.isPrime){//If video is  prime then user is  prime can see
+        res.render('playvideo', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:true,
+        });
+      }else if(data[0].isPrime && !req.user.isPrime){
+        res.redirect('back');
+      }
+      else{
+        res.render("playvideo",{ admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:false,
+        });
+      }
     }
   } else {
-    res.render("playvideo",{ admin:true,
-      user:false,
-      userInfo:'',
-      addedToFavList:false,
-      data:data,
-    });
+    if(!data[0].isPrime){ //If video is not prime then user can see
+      res.render("playvideo",{ admin:true,
+        user:false,
+        userInfo:'',
+        addedToFavList:false,
+        data:data,
+        isPrime:false,
+      });
+    }else{ // if video is prime and user is not login
+      res.redirect('back');
+    }
   }
 })
 /******************************* /userAccount *********************/
@@ -202,6 +226,7 @@ router.get('/userAccount',async function(req,res){
         user:true,
         userInfo:userInfo,
         favoriteData:favoriteData,
+        isPrime:true,
       });
     }else{
       res.render('userAccount', 
@@ -209,6 +234,7 @@ router.get('/userAccount',async function(req,res){
         user:true,
         userInfo:userInfo,
         favoriteData,favoriteData,
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -216,17 +242,18 @@ router.get('/userAccount',async function(req,res){
   }
 })
 
-router.get('/userAccount/del/:id',async function(req,res){
-  var id = req.params.id;
+router.get('/userAccount/favlist/del/:id',async function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    console.log(req.user._id);
+    var id = req.params.id;
     var userId = req.user.id;
     await User.update({_id:userId},{$pull:{"favorites":id}}).exec(); // It deletes the string from array of string .
-    console.log(req.user);
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.redirect('back');
     }else{
+      var id = req.params.id;
+      var userId = req.user.id;
+      await User.update({_id:userId},{$pull:{"favorites":id}}).exec(); // It deletes the string from array of string .
       res.redirect('back');
     }
   } else {
@@ -237,35 +264,34 @@ router.get('/userAccount/del/:id',async function(req,res){
 /************************************  Admin **************************/
 
 router.get("/admin",async function(req,res){
-  // if (req.isAuthenticated()) {
-  //   const userInfo = req.user;
-  //   res.render('admin', 
-  //     { 
-       
-  //     });
-  // } else {
-  //   res.redirect("/");
-  // }
-  var UserData =  User.find({});
-  UserData.exec(function(err,data){
-    if(err) throw err;
-    res.render('admin',{data:data});
-  })
+  if (req.isAuthenticated()) {
+    var userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      var UserData =  User.find({});
+      UserData.exec(function(err,data){
+        if(err) throw err;
+        res.render('admin',{data:data});
+      })
+    }else{
+      res.redirect("/");
+    }
+  } else {
+    res.redirect("/");
+  }
   
 })
 router.get('/admin/del/:id',function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    var id = req.params.id;
-    alert('Are you sure you want to delete this user ?');
-    var del = User.findByIdAndDelete(id); // It deletes the string from array of string .
-    del.exec(function(err,data){
-      if(err) throw err;
-    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      var id = req.params.id;
+      var del = User.findByIdAndDelete(id); // It deletes the string from array of string .
+      del.exec(function(err,data){
+        if(err) throw err;
+      })
       res.redirect('back');
     }else{
-      res.redirect('back');
+      res.redirect('/');
     }
   } else {
     res.redirect("/");
@@ -273,10 +299,10 @@ router.get('/admin/del/:id',function(req,res){
 })
 
 router.get('/adminmovies',async function(req,res){
-  var data =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      var data =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -285,40 +311,27 @@ router.get('/adminmovies',async function(req,res){
       }
       );
     }else{
-      res.render('adminVideoCategory',
-      {
-        title:"Movies",
-        path:'adminmovies',
-        data:data,
-      }
-      );
+      res.redirect('/');
     }
   } else {
-    res.render('adminVideoCategory',
-    {
-      title:"Movies",
-      path:'adminmovies',
-      data:data,
-    }
-    );
+    res.redirect('/');
   }
 })
 router.get('/admin/delVideo/:id',function(req,res){
-  console.log(req.params.id);
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    var id = req.params.id;
-    var del = movieModel.findByIdAndDelete(id); // It deletes the string from array of string .
-    del.exec(function(err,data){
-      if(err) throw err;
-    })
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+      var id = req.params.id;
+      var del = movieModel.findByIdAndDelete(id); // It deletes the string from array of string .
+      del.exec(function(err,data){
+        if(err) throw err;
+      })
       res.redirect('back');
     }else{
-      res.redirect('back');
+      res.redirect('/');
     }
   } else {
-    res.redirect("back");
+    res.redirect("/");
   }
 })
 router.get('/adminsports',async function(req,res){
@@ -414,30 +427,31 @@ router.get('/admincartoons',async function(req,res){
     );
   }
 })
-router.post('/editVideos',upload.single('imagePath'),function(req,res){
-  var movieName = req.body.title;
-  var shortDesc = req.body.shortDesc;
-  var longDesc =req.body.longDesc;
-  var movieUrl = req.body.link;
-  var isPrime = req.body.isPrime;
-  var category = req.body.category;
-  var genre = req.body.genre;
-  var imageUrl = req.file.path;
-  imageUrl = imageUrl.substring(7);
-  var id = req.body.id;
-  movieModel.findByIdAndUpdate(id , { // updating the data base.
-      movieName:movieName,
-      shortDesc:shortDesc,
-      longDesc:longDesc,
-      movieUrl:movieUrl,
-      isPrime:isPrime,
-      genre:genre,
-      category:category,
-      imageUrl:imageUrl,
-  },function(err,data){
-    if(err) throw err;
-    res.redirect('back');
-  })
+router.post('/admineditVideos',upload.single('imagePath'),function(req,res){
+    var movieName = req.body.title;
+    var shortDesc = req.body.shortDesc;
+    var longDesc =req.body.longDesc;
+    var movieUrl = req.body.link;
+    var isPrime = req.body.isPrime;
+    var category = req.body.category;
+    var genre = req.body.genre;
+    var imageUrl = req.file.path;
+    imageUrl = imageUrl.substring(7);
+    var id = req.body.id;
+    movieModel.findByIdAndUpdate(id , { // updating the data base.
+        movieName:movieName,
+        shortDesc:shortDesc,
+        longDesc:longDesc,
+        movieUrl:movieUrl,
+        isPrime:isPrime,
+        genre:genre,
+        category:category,
+        imageUrl:imageUrl,
+    },function(err,data){
+      if(err) throw err;
+      res.redirect('back');
+    })
+  
 })
 /********************************  /addProduct *******************/
 // Inserting Inside the database  movies .
@@ -490,6 +504,7 @@ router.get('/movies',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"movies",
+        isPrime:true,
       });
     }else{
       res.render('navbarTabPages', 
@@ -499,6 +514,7 @@ router.get('/movies',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"movies",
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -510,6 +526,7 @@ router.get('/movies',async function(req,res){
       data : moviesData,
       carouselData:carouselData,
       path:"movies",
+      isPrime:false,
     }
     );
   }
@@ -526,31 +543,50 @@ router.get('/movies/:path',async function(req,res){
         addedToFavList = true;
       }
     })
-    console.log(addedToFavList);
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
-        data:data,
         addedToFavList:addedToFavList,
+        data:data,
+        isPrime:true,
       });
+    }else if(data[0].isPrime && !req.user.isPrime){ 
+      res.redirect('back');
     }else{
-      res.render('playvideo', 
-      { admin:false,
-        user:true,
-        userInfo:userInfo,
-        data:data,
-        addedToFavList:addedToFavList,
-      });
+      if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
+        res.render('playvideo', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }else{
+        res.render("playvideo",{ admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }
     }
-  } else {
-    res.render("playvideo",{ admin:true,
-      user:false,
-      userInfo:'',
-      data:data,
-      addedToFavList:false,
-    });
+  }  else {
+    if(!data[0].isPrime){ //If video is not prime then user can see
+      res.render("playvideo",{ admin:true,
+        user:false,
+        userInfo:'',
+        addedToFavList:false,
+        data:data,
+        isPrime:false,
+      });
+    }else{ // if video is prime and user is not login
+
+      res.redirect('/');
+    }
   }
 });
 
@@ -568,6 +604,7 @@ router.get('/sports',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"sports",
+        isPrime:true,
       });
     }else{
       res.render('navbarTabPages', 
@@ -577,6 +614,7 @@ router.get('/sports',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"sports",
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -588,6 +626,7 @@ router.get('/sports',async function(req,res){
       data : moviesData,
       carouselData:carouselData,
       path:"sports",
+      isPrime:false,
     }
     );
   }
@@ -611,23 +650,42 @@ router.get('/sports/:path',async function(req,res){
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
+        isPrime:true,
       });
     }else{
-      res.render('playvideo', 
-      { admin:false,
-        user:true,
-        userInfo:userInfo,
-        addedToFavList:addedToFavList,
-        data:data
-      });
+      if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
+        res.render('playvideo', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }else if(data[0].isPrime && !req.user.isPrime){
+        res.redirect('back');
+      }else{
+        res.render("playvideo",{ admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }
     }
   } else {
-    res.render("playvideo",{ admin:true,
-      user:false,
-      userInfo:'',
-      addedToFavList:false,
-      data:data,
-    });
+    if(!data[0].isPrime){ //If video is not prime then user can see
+      res.render("playvideo",{ admin:true,
+        user:false,
+        userInfo:'',
+        addedToFavList:false,
+        data:data,
+        isPrime:false,
+      });
+    }else{ // if video is prime and user is not login
+      res.redirect('/');
+    }
   }
 });
 
@@ -646,6 +704,7 @@ router.get('/news',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"news",
+        isPrime:true,
       });
     }else{
       res.render('navbarTabPages', 
@@ -655,6 +714,7 @@ router.get('/news',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"news",
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -666,6 +726,7 @@ router.get('/news',async function(req,res){
       data : moviesData,
       carouselData:carouselData,
       path:"news",
+      isPrime:false,
     }
     );
   }
@@ -689,23 +750,42 @@ router.get('/news/:path',async function(req,res){
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
+        isPrime:true,
       });
     }else{
-      res.render('playvideo', 
-      { admin:false,
-        user:true,
-        userInfo:userInfo,
-        addedToFavList:addedToFavList,
-        data:data
-      });
+      if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
+        res.render('playvideo', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }else if(data[0].isPrime && !req.user.isPrime){
+        res.redirect('back');
+      }else{
+        res.render("playvideo",{ admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }
     }
   } else {
-    res.render("playvideo",{ admin:true,
-      user:false,
-      userInfo:'',
-      addedToFavList:false,
-      data:data,
-    });
+    if(!data[0].isPrime){ //If video is not prime then user can see
+      res.render("playvideo",{ admin:true,
+        user:false,
+        userInfo:'',
+        addedToFavList:false,
+        data:data,
+        isPrime:false,
+      });
+    }else{ // if video is prime and user is not login
+      res.redirect('/');
+    }
   }
 });
 
@@ -723,6 +803,7 @@ router.get('/cartoons',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"cartoons",
+        isPrime:true,
       });
     }else{
       res.render('navbarTabPages', 
@@ -732,6 +813,7 @@ router.get('/cartoons',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"cartoons",
+        isPrime:req.user.isPrime,
       });
     }
   } else {
@@ -743,6 +825,7 @@ router.get('/cartoons',async function(req,res){
       data : moviesData,
       carouselData:carouselData,
       path:"cartoons",
+      isPrime:false,
     }
     );
   }
@@ -766,23 +849,42 @@ router.get('/cartoons/:path',async function(req,res){
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
+        isPrime:true,
       });
     }else{
-      res.render('playvideo', 
-      { admin:false,
-        user:true,
-        userInfo:userInfo,
-        addedToFavList:addedToFavList,
-        data:data
-      });
+      if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
+        res.render('playvideo', 
+        { admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }else if(data[0].isPrime && !req.user.isPrime){
+        res.redirect('back');
+      }else{
+        res.render("playvideo",{ admin:false,
+          user:true,
+          userInfo:userInfo,
+          addedToFavList:addedToFavList,
+          data:data,
+          isPrime:req.user.isPrime,
+        });
+      }
     }
   } else {
-    res.render("playvideo",{ admin:true,
-      user:false,
-      userInfo:'',
-      addedToFavList:false,
-      data:data,
-    });
+    if(!data[0].isPrime){ //If video is not prime then user can see
+      res.render("playvideo",{ admin:true,
+        user:false,
+        userInfo:'',
+        addedToFavList:false,
+        data:data,
+        isPrime:false,
+      });
+    }else{ // if video is prime and user is not login
+      res.redirect('/');
+    }
   }
 });
 
@@ -793,7 +895,6 @@ router.get('/addfavorites/:id',function(req,res){
     const userInfo = req.user;
     var videoId = req.params.id;
     var id = req.user.id;
-    console.log(videoId);
     User.findByIdAndUpdate(id,{
       $push:{favorites:videoId}
     },function(err,data){
@@ -805,11 +906,25 @@ router.get('/addfavorites/:id',function(req,res){
       res.redirect('back'); //this will redirect to same page.
     }
   } else {
-    res.redirect('/');
+    res.redirect('back');
   }
 })
 
+/*************************** /getPremium ***********************/
 
+router.get('/getPremium',function(req,res){
+  if(req.isAuthenticated()){
+    var userId = req.user.id  ;
+    console.log(req.user);
+    console.log(req.user._id);
+    User.findByIdAndUpdate(userId,{isPrime:true},function(err,data){
+      if(err) throw err;
+    })
+    res.redirect('/');
+  }else{
+   res.redirect('/');
+  }
+})
 
 router.get("/login", (req, res) => {
   res.redirect('/');

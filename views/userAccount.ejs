@@ -38,7 +38,7 @@
                     <td><%= item.movieName %></td>
                     <td><%= item.category %></td>
                     <td><a href="<%=item.category%>/<%= item.path %>"  class="btn btn-outline-primary" ><i class="fas fa-video"></i></a></td>
-                    <td><a  href="userAccount/del/<%= item._id %>"   class="btn btn-outline-danger" ><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a  href="userAccount/favlist/del/<%= item._id %>"   class="btn btn-outline-danger" ><i class="fas fa-trash-alt"></i></a></td>
                   </tr>
               <%})%>
             </tbody>
