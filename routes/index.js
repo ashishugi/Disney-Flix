@@ -79,16 +79,44 @@ passport.use(new GoogleStrategy({
   callbackURL: "http://localhost:3000/auth/google/home",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
-  function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({
-        username:profile.displayName,
-        email:profile.emails[0].value,
-        photo:profile.photos[0].value,
-        isPrime:false,
-        googleId: profile.id
-      }, function (err, user) {
-      return cb(err, user);
-    });
+  // function(accessToken, refreshToken, profile, cb) {
+    // User.findOrCreate({
+    //     username:profile.displayName,
+    //     email:profile.emails[0].value,
+    //     photo:profile.photos[0].value,
+    //     isPrime:false,
+    //     googleId: profile.id
+    //   }, function (err, user) {
+    //   return cb(err, user);
+    // });
+    
+  // }
+    function(accessToken, refreshToken, profile, done) {
+      //check user table for anyone with a facebook ID of profile.id
+      User.findOne({
+          'googleId': profile.id 
+      }, function(err, user) {
+          if (err) {
+              return done(err);
+          }
+          //No user was found... so create a new user with values from Facebook (all the profile. stuff)
+          if (!user) {
+              user = new User({
+                    username:profile.displayName,
+                    email:profile.emails[0].value,
+                    photo:profile.photos[0].value,
+                    isPrime:false,
+                    googleId: profile.id
+              });
+              user.save(function(err) {
+                  if (err) console.log(err);
+                  return done(err, user);
+              });
+          } else {
+              //found user. Return
+              return done(err, user);
+          }
+      });
   }
 ));
 router.get('/auth/google',
@@ -159,6 +187,9 @@ router.get('/',async function(req, res, next) {
 router.get('/home/:path', async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  const genre = data[0].genre;
+  const category = data[0].category;
+  const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var addedToFavList = false;
@@ -176,6 +207,7 @@ router.get('/home/:path', async function(req,res){
         addedToFavList:addedToFavList,
         data:data,
         isPrime:true,
+        recommendedData:recommendedData,
       });
     }else{
       if(data[0].isPrime && req.user.isPrime){//If video is  prime then user is  prime can see
@@ -186,6 +218,7 @@ router.get('/home/:path', async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:true,
+          recommendedData:recommendedData,
         });
       }else if(data[0].isPrime && !req.user.isPrime){
         res.redirect('back');
@@ -197,6 +230,7 @@ router.get('/home/:path', async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:false,
+          recommendedData:recommendedData,
         });
       }
     }
@@ -208,6 +242,7 @@ router.get('/home/:path', async function(req,res){
         addedToFavList:false,
         data:data,
         isPrime:false,
+        recommendedData:recommendedData,
       });
     }else{ // if video is prime and user is not login
       res.redirect('back');
@@ -534,6 +569,9 @@ router.get('/movies',async function(req,res){
 router.get('/movies/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  const genre = data[0].genre;
+  const category = data[0].category;
+  const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var addedToFavList = false;
@@ -551,6 +589,7 @@ router.get('/movies/:path',async function(req,res){
         addedToFavList:addedToFavList,
         data:data,
         isPrime:true,
+        recommendedData:recommendedData,
       });
     }else if(data[0].isPrime && !req.user.isPrime){ 
       res.redirect('back');
@@ -563,6 +602,7 @@ router.get('/movies/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }else{
         res.render("playvideo",{ admin:false,
@@ -571,6 +611,7 @@ router.get('/movies/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }
     }
@@ -582,6 +623,7 @@ router.get('/movies/:path',async function(req,res){
         addedToFavList:false,
         data:data,
         isPrime:false,
+        recommendedData:recommendedData,
       });
     }else{ // if video is prime and user is not login
 
@@ -634,6 +676,9 @@ router.get('/sports',async function(req,res){
 router.get('/sports/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  const genre = data[0].genre;
+  const category = data[0].category;
+  const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var addedToFavList = false;
@@ -651,6 +696,7 @@ router.get('/sports/:path',async function(req,res){
         addedToFavList:addedToFavList,
         data:data,
         isPrime:true,
+        recommendedData:recommendedData,
       });
     }else{
       if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
@@ -661,6 +707,7 @@ router.get('/sports/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }else if(data[0].isPrime && !req.user.isPrime){
         res.redirect('back');
@@ -671,6 +718,7 @@ router.get('/sports/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }
     }
@@ -682,6 +730,7 @@ router.get('/sports/:path',async function(req,res){
         addedToFavList:false,
         data:data,
         isPrime:false,
+        recommendedData:recommendedData,
       });
     }else{ // if video is prime and user is not login
       res.redirect('/');
@@ -734,6 +783,9 @@ router.get('/news',async function(req,res){
 router.get('/news/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  const genre = data[0].genre;
+  const category = data[0].category;
+  const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var addedToFavList = false;
@@ -751,6 +803,7 @@ router.get('/news/:path',async function(req,res){
         addedToFavList:addedToFavList,
         data:data,
         isPrime:true,
+        recommendedData:recommendedData,
       });
     }else{
       if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
@@ -761,6 +814,7 @@ router.get('/news/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }else if(data[0].isPrime && !req.user.isPrime){
         res.redirect('back');
@@ -771,6 +825,7 @@ router.get('/news/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }
     }
@@ -782,6 +837,7 @@ router.get('/news/:path',async function(req,res){
         addedToFavList:false,
         data:data,
         isPrime:false,
+        recommendedData:recommendedData,
       });
     }else{ // if video is prime and user is not login
       res.redirect('/');
@@ -833,6 +889,9 @@ router.get('/cartoons',async function(req,res){
 router.get('/cartoons/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  const genre = data[0].genre;
+  const category = data[0].category;
+  const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var addedToFavList = false;
@@ -850,6 +909,7 @@ router.get('/cartoons/:path',async function(req,res){
         addedToFavList:addedToFavList,
         data:data,
         isPrime:true,
+        recommendedData:recommendedData,
       });
     }else{
       if(data[0].isPrime && req.user.isPrime){//If video is not prime then user is not prime cannot  see
@@ -860,6 +920,7 @@ router.get('/cartoons/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }else if(data[0].isPrime && !req.user.isPrime){
         res.redirect('back');
@@ -870,6 +931,7 @@ router.get('/cartoons/:path',async function(req,res){
           addedToFavList:addedToFavList,
           data:data,
           isPrime:req.user.isPrime,
+          recommendedData:recommendedData,
         });
       }
     }
@@ -881,6 +943,7 @@ router.get('/cartoons/:path',async function(req,res){
         addedToFavList:false,
         data:data,
         isPrime:false,
+        recommendedData:recommendedData,
       });
     }else{ // if video is prime and user is not login
       res.redirect('/');
@@ -912,20 +975,19 @@ router.get('/addfavorites/:id',function(req,res){
 
 /*************************** /getPremium ***********************/
 
-router.get('/getPremium',function(req,res){
+router.get('/getPremium',async function(req,res){
   if(req.isAuthenticated()){
     var userId = req.user.id  ;
-    console.log(req.user);
-    console.log(req.user._id);
-    User.findByIdAndUpdate(userId,{isPrime:true},function(err,data){
-      if(err) throw err;
-    })
+    console.log(userId); 
+    await User.findByIdAndUpdate({_id:userId}, {isPrime:true}).exec();
     res.redirect('/');
   }else{
    res.redirect('/');
   }
 })
 
+
+/*********************  login and logout **********************/
 router.get("/login", (req, res) => {
   res.redirect('/');
 });

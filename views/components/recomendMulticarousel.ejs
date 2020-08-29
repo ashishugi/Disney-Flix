@@ -1,0 +1,14 @@
+<div class="multiCarouselWrapper">
+    <h5 style="color: white;font-weight: 600"><%= title%></h5>
+    <div class="owl-carousel  owl-theme" style="padding-top:5px">
+        <%data.forEach(function(item){%>
+          <a href="/<%= item.category%>/<%= item.path %>" >
+              <div class="card multi-carousel-card " >
+                <div class="card-body" style="position: relative;">
+                  <img src="/<%= item.imageUrl %>" style="height: 150px"/>
+                </div>
+              </div>
+          </a>
+        <%})%>
+    </div>
+</div>

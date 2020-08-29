@@ -20,4 +20,5 @@
         <h6 style="color: #3d7ce0 ;text-transform:capitalize;"><%= data[0].category  %></h6>
         <p style="font-size:120% ;color:#95c6d0;font-weight: 100;line-height: 32px"><%= data[0].longDesc  %></p>
 </div>
+<%- include("./components/recomendMulticarousel.ejs",{title:"Recommended for You",data:recommendedData}) %>
 <%- include("./components/footer") %>
