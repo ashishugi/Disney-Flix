@@ -1,7 +1,5 @@
-<%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
-<%- include('./components/carousel.ejs') %>
-<%- include('./components/movieCards.ejs',{ title:"Latest Movies for You",path:path ,data:data}) %>
 
-
-<p>Welcome to </p>
-<%- include("./components/footer") %>
+        <%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
+        <%- include('./components/carousel.ejs') %>
+        <%- include('./components/movieCards.ejs',{ title:"Latest Movies for You",path:path ,data:data}) %>
+        <%- include("./components/footer") %>
