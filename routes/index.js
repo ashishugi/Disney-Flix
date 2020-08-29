@@ -7,6 +7,7 @@ const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 const mongoose = require("mongoose");
 var multer  = require('multer')
@@ -129,6 +130,52 @@ router.get('/auth/google/home',
     res.redirect('/');
   }
 );
+/*****************************  Facebook Auth  **********************/
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  callbackURL: "http://localhost:3000/auth/facebook/home",
+  profileFields: ['id', 'displayName', 'name', 'gender', 'email','profileUrl']
+},
+  function(accessToken, refreshToken, profile, done) {
+    //check user table for anyone with a facebook ID of profile.id
+    console.log(profile);
+    User.findOne({
+        'facebookId': profile.id 
+    }, function(err, user) {
+        if (err) {
+            return done(err);
+        }
+        //No user was found... so create a new user with values from Facebook (all the profile. stuff)
+        if (!user) {
+            user = new User({
+                  username:profile.displayName,
+                  email:profile.emails[0].value,
+                  photo:profile.photos[0].value,
+                  isPrime:false,
+                  facebookId: profile.id
+            });
+            user.save(function(err) {
+                if (err) console.log(err);
+                return done(err, user);
+            });
+        } else {
+            //found user. Return
+            return done(err, user);
+        }
+    });
+  }
+));
+
+router.get('/auth/facebook',
+   passport.authenticate('facebook',{ scope: ['email']}));
+ 
+router.get('/auth/facebook/home',
+   passport.authenticate('facebook', { failureRedirect: '/login' }),
+   function(req, res) {
+       // Successful authentication, redirect home.
+       res.redirect('/');
+   });
 
 
 /**************************** GET home page. ******************/
@@ -617,9 +664,11 @@ router.get('/movies',async function(req,res){
 router.get('/movies/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  var genre="action";
+  var category="movies";
   if(data.length > 0 ){
-    const genre = data[0].genre;
-    const category = data[0].category;
+    genre = data[0].genre;
+    category = data[0].category;
   }else{
     res.redirect('/');
   }
@@ -728,9 +777,11 @@ router.get('/sports',async function(req,res){
 router.get('/sports/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  var genre="none";
+  var category="sports";
   if(data.length > 0 ){
-    const genre = data[0].genre;
-    const category = data[0].category;
+    genre = data[0].genre;
+    category = data[0].category;
   }else{
     res.redirect('/');
   }
@@ -839,9 +890,11 @@ router.get('/news',async function(req,res){
 router.get('/news/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  var genre="none";
+  var category="news";
   if(data.length > 0 ){
-    const genre = data[0].genre;
-    const category = data[0].category;
+    genre = data[0].genre;
+    category = data[0].category;
   }else{
     res.redirect('/');
   }
@@ -949,6 +1002,8 @@ router.get('/cartoons',async function(req,res){
 router.get('/cartoons/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
+  var genre="comedy";
+  var category="cartoons";
   if(data.length > 0 ){
     const genre = data[0].genre;
     const category = data[0].category;

@@ -16,42 +16,44 @@
 </head>
 <body onload="loadingFunction()">
   <div id="loading"></div>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="/">DisneyFlix</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-          <ul class="navbar-nav mr-auto">
+   <div class="navbarWrapper">
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="/">DisneyFlix</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/movies">Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sports">Sports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/news">News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/cartoons">Cartoons</a>
+          </li>
+          
+          <%if(admin){%>
             <li class="nav-item">
-              <a class="nav-link" href="/movies">Movies</a>
+              <a class="nav-link" href="/admin">Admin</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/sports">Sports</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/news">News</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/cartoons">Cartoons</a>
-            </li>
-            
-            <%if(admin){%>
-              <li class="nav-item">
-                <a class="nav-link" href="/admin">Admin</a>
-              </li>
-            <%}%>
-          </ul>
-          <%if(!isPrime){%>
-            <a href="/getPremium" style="background-color: rgb(230, 199, 23);" class="btn mr-0 mr-4" >Premium</a>
           <%}%>
-          <%if(user === true){%>
-            <button class="mr-4 login"><a href="/logout" class="login">Logout</a></button>
-            <a href="/userAccount" class="user-icon"><img src="<%= userInfo.photo%>"/></a>
-          <%}else{%>
-            <button class="mr-0 login" data-toggle="modal" data-target="#loginModel"><a>Login</a></button>
-          <%}%>
-        </div>
-      </nav>
+        </ul>
+        <%if(!isPrime){%>
+          <a href="/getPremium" style="background-color: rgb(230, 199, 23);" class="btn mr-0 mr-4" >Premium</a>
+        <%}%>
+        <%if(user === true){%>
+          <button class="mr-4 login"><a href="/logout" class="login">Logout</a></button>
+          <a href="/userAccount" class="user-icon"><img src="<%= userInfo.photo%>"/></a>
+        <%}else{%>
+          <button class="mr-0 login" data-toggle="modal" data-target="#loginModel"><a>Login</a></button>
+        <%}%>
+      </div>
+    </nav>
+   </div>
       <!-- The below model is for the login -->
       <%- include("./loginModal")%>

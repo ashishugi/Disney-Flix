@@ -1,6 +1,6 @@
 
 
-    <%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
+    <%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin,isPrime:isPrime }) %>
     <%- include('./components/carousel.ejs',{carouselData:carouselData}) %>
     <%- include('./components/muticarousel.ejs',{title:"Playlist Recommended for You" ,data:userRecommended}) %>
     <%- include('./components/muticarousel.ejs',{title:"Specials & Latest Movies" ,data:moviesData}) %>

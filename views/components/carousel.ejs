@@ -3,7 +3,7 @@
         <div class="carousel-inner">
           <div class="carousel-item active">
             <div class="row" style="border-radius: 10px">
-                <div class="col-md-4 col-sm-0 padding-0"  style=" text-align:left;background-color: #030b17;">
+                <div class="col-md-4 col-sm-0 padding-0 caraousel-item-displaynot"  style=" text-align:left;background-color: #030b17;">
                     <h4 class="carousel-header"><%= carouselData[0].movieName %></h4>
                     <p class="carousel-body"><%= carouselData[0].longDesc %></p>
                 </div>
@@ -15,10 +15,10 @@
          <% for(var i=1;i<carouselData.length;i++){%>
             <div class="carousel-item" data-interval="2000">
                     <div class="row" style="border-radius: 10px">
-                        <div class="col-md-4 col-sm-0 padding-0"  style=" text-align:left;background-color: #030b17;">
+                        <div class="col-md-4 col-sm-0 padding-0 caraousel-item-displaynot"  style=" text-align:left;background-color: #030b17;">
                                 <h4 class="carousel-header"><%= carouselData[i].movieName %></h4>
                                 <p class="carousel-body"><%= carouselData[i].longDesc %></p>
-                            </div>
+                        </div>
                         <div class="col-md-8 col-sm-12  padding-0">
                             <img src="<%= carouselData[i].imageUrl %>" class="d-block w-100 carousel-images" alt="...">
                         </div>
