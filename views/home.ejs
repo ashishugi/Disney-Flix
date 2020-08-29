@@ -2,7 +2,7 @@
 
     <%- include("./components/navbar",{user:user,userInfo:userInfo,admin:admin }) %>
     <%- include('./components/carousel.ejs',{carouselData:carouselData}) %>
-
+    <%- include('./components/muticarousel.ejs',{title:"Playlist Recommended for You" ,data:userRecommended}) %>
     <%- include('./components/muticarousel.ejs',{title:"Specials & Latest Movies" ,data:moviesData}) %>
     <%- include('./components/muticarousel.ejs',{title:"Best In Sports" ,data:sportsData}) %>
     <%- include('./components/muticarousel.ejs',{title:"Live News" ,data:newsData}) %>

@@ -23,26 +23,32 @@
 <div class="favorite-list">
     <div class="container">
         <h2>Favorite List</h2>
-        <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Name </th>
-                <th scope="col">Category</th>
-                <th scope="col">Watch</th>
-                <th scope="col">Remove</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%favoriteData.forEach(function(item){%>
-                <tr>
-                    <td><%= item.movieName %></td>
-                    <td><%= item.category %></td>
-                    <td><a href="<%=item.category%>/<%= item.path %>"  class="btn btn-outline-primary" ><i class="fas fa-video"></i></a></td>
-                    <td><a  href="userAccount/favlist/del/<%= item._id %>"   class="btn btn-outline-danger" ><i class="fas fa-trash-alt"></i></a></td>
-                  </tr>
-              <%})%>
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="col-md-12 col-sm-8">
+                <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Name </th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Genre</th>
+                        <th scope="col">Watch</th>
+                        <th scope="col">Remove</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%favoriteData.forEach(function(item){%>
+                        <tr>
+                            <td><%= item.movieName %></td>
+                            <td><%= item.category %></td>
+                            <td><%= item.genre %></td>
+                            <td><a href="<%=item.category%>/<%= item.path %>"  class="btn btn-outline-primary" ><i class="fas fa-video"></i></a></td>
+                            <td><a  href="userAccount/favlist/del/<%= item._id %>"   class="btn btn-outline-danger" ><i class="fas fa-trash-alt"></i></a></td>
+                          </tr>
+                      <%})%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <%- include('./components/footer.ejs') %>

@@ -137,11 +137,40 @@ router.get('/',async function(req, res, next) {
   var sportsData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(10).exec();
   var newsData   =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(10).exec();
   var cartoonsData=await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(10).exec();
-  var len =await moviesData.length;
-  var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
+  var len =await moviesData.length+sportsData.length+newsData.length+cartoonsData.length;
+  var carouselData = await movieModel.find({category:"movies"}).sort({ $natural: -1 }).limit(5).exec();
+  var userRecommended = await movieModel.find({}).skip(Math.random()*len).limit(15).exec();
   if (req.isAuthenticated()) {
     var userInfo = req.user;
-    console.log(userInfo);
+/////////////////////     Machine Computation for recommendation ////////////////////
+    var favArray = req.user.favorites;
+    var favoriteData = await movieModel.find({_id:{$in:favArray}}).exec();
+    var collectionFavCategory = {};
+    var collectionFavGenre = {};
+    var final_genre="";
+    var final_category="";
+    var maxCount =0;
+    for(var i=0;i<favoriteData.length;i++){
+      var value = favoriteData[i].category;
+      collectionFavCategory[value] = collectionFavCategory[value] ? collectionFavCategory[value]+1:1;
+      if(collectionFavCategory[value] > maxCount){
+        final_category = value;
+        maxCount = collectionFavCategory[value];
+      }
+    }
+    maxCount =0;
+    for(var i=0;i<favoriteData.length;i++){
+      var value = favoriteData[i].genre;
+      if(final_category === favoriteData[i].category){
+        collectionFavGenre[value] = collectionFavGenre[value] ? collectionFavGenre[value]+1:1;
+        if(collectionFavGenre[value] > maxCount){
+          final_genre = value;
+          maxCount = collectionFavGenre[value];
+        }
+      }
+    }
+    userRecommended = await  movieModel.find({category:final_category,genre:final_genre}).exec();
+////////////////////////// End of Machine Computation of Recommendation ////////////////////
     if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('home', 
       { admin:true,
@@ -152,6 +181,7 @@ router.get('/',async function(req, res, next) {
         newsData:newsData,
         cartoonsData:cartoonsData,
         carouselData:carouselData,
+        userRecommended:userRecommended,
         isPrime:true,
       });
     }else{
@@ -165,6 +195,7 @@ router.get('/',async function(req, res, next) {
         newsData:newsData,
         cartoonsData:cartoonsData,
         carouselData:carouselData,
+        userRecommended:userRecommended,
         isPrime:req.user.isPrime,
       });
     }
@@ -179,6 +210,7 @@ router.get('/',async function(req, res, next) {
       newsData:newsData,
       cartoonsData:cartoonsData,
       carouselData:carouselData,
+      userRecommended:userRecommended,
       isPrime:false,
    });
   }
@@ -296,7 +328,7 @@ router.get('/userAccount/favlist/del/:id',async function(req,res){
   }
 })
 
-/************************************  Admin **************************/
+/************************************  /admin **************************/
 
 router.get("/admin",async function(req,res){
   if (req.isAuthenticated()) {
@@ -470,22 +502,38 @@ router.post('/admineditVideos',upload.single('imagePath'),function(req,res){
     var isPrime = req.body.isPrime;
     var category = req.body.category;
     var genre = req.body.genre;
-    var imageUrl = req.file.path;
-    imageUrl = imageUrl.substring(7);
-    var id = req.body.id;
-    movieModel.findByIdAndUpdate(id , { // updating the data base.
-        movieName:movieName,
-        shortDesc:shortDesc,
-        longDesc:longDesc,
-        movieUrl:movieUrl,
-        isPrime:isPrime,
-        genre:genre,
-        category:category,
-        imageUrl:imageUrl,
-    },function(err,data){
-      if(err) throw err;
-      res.redirect('back');
-    })
+    if(!req.file){ // if the file is not uploaded by the user.
+        var id = req.body.id;
+        movieModel.findByIdAndUpdate(id , { // updating the data base.
+            movieName:movieName,
+            shortDesc:shortDesc,
+            longDesc:longDesc,
+            movieUrl:movieUrl,
+            isPrime:isPrime,
+            genre:genre,
+            category:category,
+        },function(err,data){
+          if(err) throw err;
+          res.redirect('back');
+        })
+    }else{ // if file is uploaded by the user.
+        var imageUrl = req.file.path;
+        imageUrl = imageUrl.substring(7);
+        var id = req.body.id;
+        movieModel.findByIdAndUpdate(id , { // updating the data base.
+            movieName:movieName,
+            shortDesc:shortDesc,
+            longDesc:longDesc,
+            movieUrl:movieUrl,
+            isPrime:isPrime,
+            genre:genre,
+            category:category,
+            imageUrl:imageUrl,
+        },function(err,data){
+          if(err) throw err;
+          res.redirect('back');
+        })
+    }
   
 })
 /********************************  /addProduct *******************/
@@ -569,8 +617,12 @@ router.get('/movies',async function(req,res){
 router.get('/movies/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
-  const genre = data[0].genre;
-  const category = data[0].category;
+  if(data.length > 0 ){
+    const genre = data[0].genre;
+    const category = data[0].category;
+  }else{
+    res.redirect('/');
+  }
   const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
@@ -676,8 +728,12 @@ router.get('/sports',async function(req,res){
 router.get('/sports/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
-  const genre = data[0].genre;
-  const category = data[0].category;
+  if(data.length > 0 ){
+    const genre = data[0].genre;
+    const category = data[0].category;
+  }else{
+    res.redirect('/');
+  }
   const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
@@ -783,8 +839,12 @@ router.get('/news',async function(req,res){
 router.get('/news/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
-  const genre = data[0].genre;
-  const category = data[0].category;
+  if(data.length > 0 ){
+    const genre = data[0].genre;
+    const category = data[0].category;
+  }else{
+    res.redirect('/');
+  }
   const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
@@ -889,8 +949,12 @@ router.get('/cartoons',async function(req,res){
 router.get('/cartoons/:path',async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
-  const genre = data[0].genre;
-  const category = data[0].category;
+  if(data.length > 0 ){
+    const genre = data[0].genre;
+    const category = data[0].category;
+  }else{
+    res.redirect('/');
+  }
   const recommendedData = await movieModel.find({genre:genre,category:category});
   if (req.isAuthenticated()) {
     const userInfo = req.user;
@@ -995,6 +1059,101 @@ router.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/");
 })
+
+/***************************  404 Case Page not found ************/
+//this is for the 404 page
+router.get('*', function(req, res){
+  if(req.isAuthenticated()){
+    var userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+        res.render('404',
+      {
+        admin:true,
+        user:true,
+        userInfo:userInfo,
+        isPrime:true,
+      });
+    }else{
+        res.render('404',
+      {
+        admin:false,
+        user:true,
+        userInfo:userInfo,
+        isPrime:req.user.isPrime,
+      });
+    }
+  }else{
+    res.render('404',
+      {
+        admin:false,
+        user:false,
+        userInfo:userInfo,
+        isPrime:false,
+      });
+  }
+});
+router.get('/*', function(req, res){
+  if(req.isAuthenticated()){
+    var userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+        res.render('404',
+      {
+        admin:true,
+        user:true,
+        userInfo:userInfo,
+        isPrime:true,
+      });
+    }else{
+        res.render('404',
+      {
+        admin:false,
+        user:true,
+        userInfo:userInfo,
+        isPrime:req.user.isPrime,
+      });
+    }
+  }else{
+    res.render('404',
+      {
+        admin:false,
+        user:false,
+        userInfo:userInfo,
+        isPrime:false,
+      });
+  }
+  
+});
+router.get('404', function(req, res){
+  if(req.isAuthenticated()){
+    var userInfo = req.user;
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+        res.render('404',
+      {
+        admin:true,
+        user:true,
+        userInfo:userInfo,
+        isPrime:true,
+      });
+    }else{
+        res.render('404',
+      {
+        admin:false,
+        user:true,
+        userInfo:userInfo,
+        isPrime:req.user.isPrime,
+      });
+    }
+  }else{
+    res.render('404',
+      {
+        admin:false,
+        user:false,
+        userInfo:userInfo,
+        isPrime:false,
+      });
+  }
+  
+});
 
 
 module.exports = router;
