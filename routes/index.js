@@ -77,7 +77,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/google/home",
+  callbackURL: "https://disneyflix.herokuapp.com/auth/google/home",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   // function(accessToken, refreshToken, profile, cb) {
@@ -134,7 +134,7 @@ router.get('/auth/google/home',
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_CLIENT_ID,
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/facebook/home",
+  callbackURL: "https://disneyflix.herokuapp.com/auth/facebook/home",
   profileFields: ['id', 'displayName', 'name', 'gender', 'email','profileUrl']
 },
   function(accessToken, refreshToken, profile, done) {
