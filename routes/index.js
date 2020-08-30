@@ -318,7 +318,7 @@ router.get('/home/:path', async function(req,res){
     }
   } else {
     if(!data[0].isPrime){ //If video is not prime then user can see
-      res.render("playvideo",{ admin:true,
+      res.render("playvideo",{ admin:false,
         user:false,
         userInfo:'',
         addedToFavList:false,
@@ -721,7 +721,7 @@ router.get('/movies/:path',async function(req,res){
     }
   }  else {
     if(!data[0].isPrime){ //If video is not prime then user can see
-      res.render("playvideo",{ admin:true,
+      res.render("playvideo",{ admin:false,
         user:false,
         userInfo:'',
         addedToFavList:false,
@@ -834,7 +834,7 @@ router.get('/sports/:path',async function(req,res){
     }
   } else {
     if(!data[0].isPrime){ //If video is not prime then user can see
-      res.render("playvideo",{ admin:true,
+      res.render("playvideo",{ admin:false,
         user:false,
         userInfo:'',
         addedToFavList:false,
@@ -947,7 +947,7 @@ router.get('/news/:path',async function(req,res){
     }
   } else {
     if(!data[0].isPrime){ //If video is not prime then user can see
-      res.render("playvideo",{ admin:true,
+      res.render("playvideo",{ admin:false,
         user:false,
         userInfo:'',
         addedToFavList:false,
@@ -1059,7 +1059,7 @@ router.get('/cartoons/:path',async function(req,res){
     }
   } else {
     if(!data[0].isPrime){ //If video is not prime then user can see
-      res.render("playvideo",{ admin:true,
+      res.render("playvideo",{ admin:false,
         user:false,
         userInfo:'',
         addedToFavList:false,
