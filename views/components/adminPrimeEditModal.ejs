@@ -1,0 +1,30 @@
+<!-- Button trigger modal -->
+      <!-- Modal -->
+      <div class="modal fade" id="PrimeEdit<%=item.id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                        <div class="modal-body">
+                                <form class="form" action="/adminPrimeEditUser" method="POST" >
+                                    <input type="hidden" value="<%= item.id %>" name="id"/>
+                                    <div class="form-group">
+                                        <label for="inputState">User Email</label>
+                                        <input type="text" class="form-control" value="<%=item.email%>" readonly/>
+                                    </div>
+                                        <div class="form-group">
+                                            <label for="inputState">Type Of Video</label>
+                                            <select id="inputState" class="form-control" name="isPrime">
+                                                <option selected value=true>Prime</option>
+                                                <option value=false>NonPrime</option>
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                </form>
+                        </div>
+                </div>
+          </div>
+        </div>
+      </div>
+        

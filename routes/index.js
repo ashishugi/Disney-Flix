@@ -216,9 +216,12 @@ router.get('/',async function(req, res, next) {
         }
       }
     }
-    userRecommended = await  movieModel.find({category:final_category,genre:final_genre}).exec();
+    var userRecommendedTemp = await  movieModel.find({category:final_category,genre:final_genre}).exec();
+    if(userRecommendedTemp.length> 0){
+        userRecommended = userRecommendedTemp;
+    }
 ////////////////////////// End of Machine Computation of Recommendation ////////////////////
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('home', 
       { admin:true,
         user:true,
@@ -229,7 +232,7 @@ router.get('/',async function(req, res, next) {
         cartoonsData:cartoonsData,
         carouselData:carouselData,
         userRecommended:userRecommended,
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('home', 
@@ -278,14 +281,14 @@ router.get('/home/:path', async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"  || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
-        isPrime:true,
+        isPrime:req.user.isPrime,
         recommendedData:recommendedData,
       });
     }else{
@@ -334,13 +337,13 @@ router.get('/userAccount',async function(req,res){
     const userInfo = req.user;
     var favArray = req.user.favorites;
     var favoriteData = await movieModel.find({_id:{$in:favArray}}).exec(); // Is is for fetching multiple data .
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('userAccount', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         favoriteData:favoriteData,
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('userAccount', 
@@ -362,7 +365,7 @@ router.get('/userAccount/favlist/del/:id',async function(req,res){
     var id = req.params.id;
     var userId = req.user.id;
     await User.update({_id:userId},{$pull:{"favorites":id}}).exec(); // It deletes the string from array of string .
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.redirect('back');
     }else{
       var id = req.params.id;
@@ -380,7 +383,7 @@ router.get('/userAccount/favlist/del/:id',async function(req,res){
 router.get("/admin",async function(req,res){
   if (req.isAuthenticated()) {
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       var UserData =  User.find({});
       UserData.exec(function(err,data){
         if(err) throw err;
@@ -397,7 +400,7 @@ router.get("/admin",async function(req,res){
 router.get('/admin/del/:id',function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       var id = req.params.id;
       var del = User.findByIdAndDelete(id); // It deletes the string from array of string .
       del.exec(function(err,data){
@@ -415,7 +418,7 @@ router.get('/admin/del/:id',function(req,res){
 router.get('/adminmovies',async function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       var data =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
       res.render('adminVideoCategory',
       {
@@ -434,7 +437,7 @@ router.get('/adminmovies',async function(req,res){
 router.get('/admin/delVideo/:id',function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       var id = req.params.id;
       var del = movieModel.findByIdAndDelete(id); // It deletes the string from array of string .
       del.exec(function(err,data){
@@ -452,7 +455,7 @@ router.get('/adminsports',async function(req,res){
   var data =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -483,7 +486,7 @@ router.get('/adminnews',async function(req,res){
   var data =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -514,7 +517,7 @@ router.get('/admincartoons',async function(req,res){
   var data =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -626,7 +629,7 @@ router.get('/movies',async function(req,res){
   var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -634,7 +637,7 @@ router.get('/movies',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"movies",
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('navbarTabPages', 
@@ -689,7 +692,7 @@ router.get('/movies/:path',async function(req,res){
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
-        isPrime:true,
+        isPrime:req.user.isPrime,
         recommendedData:recommendedData,
       });
     }else if(data[0].isPrime && !req.user.isPrime){ 
@@ -739,7 +742,7 @@ router.get('/sports',async function(req,res){
   var carouselData = await movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -747,7 +750,7 @@ router.get('/sports',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"sports",
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('navbarTabPages', 
@@ -795,14 +798,14 @@ router.get('/sports/:path',async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
-        isPrime:true,
+        isPrime:req.user.isPrime,
         recommendedData:recommendedData,
       });
     }else{
@@ -852,7 +855,7 @@ router.get('/news',async function(req,res){
   var carouselData = await movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -860,7 +863,7 @@ router.get('/news',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"news",
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('navbarTabPages', 
@@ -908,14 +911,14 @@ router.get('/news/:path',async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
-        isPrime:true,
+        isPrime:req.user.isPrime,
         recommendedData:recommendedData,
       });
     }else{
@@ -964,7 +967,7 @@ router.get('/cartoons',async function(req,res){
   var carouselData = await movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -972,7 +975,7 @@ router.get('/cartoons',async function(req,res){
         data : moviesData,
         carouselData:carouselData,
         path:"cartoons",
-        isPrime:true,
+        isPrime:req.user.isPrime,
       });
     }else{
       res.render('navbarTabPages', 
@@ -1020,14 +1023,14 @@ router.get('/cartoons/:path',async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
         userInfo:userInfo,
         addedToFavList:addedToFavList,
         data:data,
-        isPrime:true,
+        isPrime:req.user.isPrime,
         recommendedData:recommendedData,
       });
     }else{
@@ -1082,7 +1085,7 @@ router.get('/addfavorites/:id',function(req,res){
     },function(err,data){
       if(err) throw err;
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
       res.redirect('back');
     }else{
       res.redirect('back'); //this will redirect to same page.
@@ -1105,6 +1108,20 @@ router.get('/getPremium',async function(req,res){
   }
 })
 
+/********************************** /adminPrimeEditUser ******************/
+router.post('/adminPrimeEditUser',async function(req,res){
+  if(req.isAuthenticated()){
+    if(req.user.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
+      var userId = req.body.id  ;
+      var setPrime = req.body.isPrime;
+      await User.findByIdAndUpdate({_id:userId}, {isPrime:setPrime}).exec();
+      res.redirect('back');
+    }
+  }else{
+   res.redirect('/');
+  }
+})
+
 
 /*********************  login and logout **********************/
 router.get("/login", (req, res) => {
@@ -1120,7 +1137,7 @@ router.get("/logout", (req, res) => {
 router.get('*', function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
         res.render('404',
       {
         admin:true,
@@ -1150,7 +1167,7 @@ router.get('*', function(req, res){
 router.get('/*', function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
         res.render('404',
       {
         admin:true,
@@ -1181,7 +1198,7 @@ router.get('/*', function(req, res){
 router.get('404', function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
         res.render('404',
       {
         admin:true,
