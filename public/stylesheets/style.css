@@ -157,6 +157,9 @@ nav ul li{
   .caraousel-item-displaynot{
     display: none;
   }
+  .hide-subscribe-email{
+    display: none;
+  }
 }
 .carousel-images {
   width:50%;
