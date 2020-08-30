@@ -13,6 +13,14 @@ const mongoose = require("mongoose");
 var multer  = require('multer')
 const  movieModel =require('../database/movies');
 
+/**************************** Avoid caching *********************** */
+function nocache(req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+}
+
 /*********************************** using multer for uploading the files ***************/
 // For uploading files
 var storage = multer.diskStorage({
@@ -179,7 +187,7 @@ router.get('/auth/facebook/home',
 
 
 /**************************** GET home page. ******************/
-router.get('/',async function(req, res, next) {
+router.get('/',nocache,async function(req, res, next) {
   var moviesData =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).limit(10).exec();
   var sportsData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(10).exec();
   var newsData   =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(10).exec();
@@ -266,7 +274,7 @@ router.get('/',async function(req, res, next) {
   }
 });
 
-router.get('/home/:path', async function(req,res){
+router.get('/home/:path',nocache, async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   const genre = data[0].genre;
@@ -332,7 +340,7 @@ router.get('/home/:path', async function(req,res){
   }
 })
 /******************************* /userAccount *********************/
-router.get('/userAccount',async function(req,res){
+router.get('/userAccount',nocache,async function(req,res){
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var favArray = req.user.favorites;
@@ -359,7 +367,7 @@ router.get('/userAccount',async function(req,res){
   }
 })
 
-router.get('/userAccount/favlist/del/:id',async function(req,res){
+router.get('/userAccount/favlist/del/:id',nocache,async function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
     var id = req.params.id;
@@ -380,7 +388,7 @@ router.get('/userAccount/favlist/del/:id',async function(req,res){
 
 /************************************  /admin **************************/
 
-router.get("/admin",async function(req,res){
+router.get("/admin",nocache,async function(req,res){
   if (req.isAuthenticated()) {
     var userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
@@ -397,7 +405,7 @@ router.get("/admin",async function(req,res){
   }
   
 })
-router.get('/admin/del/:id',function(req,res){
+router.get('/admin/del/:id',nocache,function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
@@ -415,7 +423,7 @@ router.get('/admin/del/:id',function(req,res){
   }
 })
 
-router.get('/adminmovies',async function(req,res){
+router.get('/adminmovies',nocache,async function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
@@ -434,7 +442,7 @@ router.get('/adminmovies',async function(req,res){
     res.redirect('/');
   }
 })
-router.get('/admin/delVideo/:id',function(req,res){
+router.get('/admin/delVideo/:id',nocache,function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
@@ -451,7 +459,7 @@ router.get('/admin/delVideo/:id',function(req,res){
     res.redirect("/");
   }
 })
-router.get('/adminsports',async function(req,res){
+router.get('/adminsports',nocache,async function(req,res){
   var data =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
@@ -482,7 +490,7 @@ router.get('/adminsports',async function(req,res){
     );
   }
 })
-router.get('/adminnews',async function(req,res){
+router.get('/adminnews',nocache,async function(req,res){
   var data =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
@@ -513,7 +521,7 @@ router.get('/adminnews',async function(req,res){
     );
   }
 })
-router.get('/admincartoons',async function(req,res){
+router.get('/admincartoons',nocache,async function(req,res){
   var data =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
@@ -624,7 +632,7 @@ router.post('/addProduct',upload.single('imagePath'),function(req,res){
     res.redirect('/admin');
 })
 /*************************  /movies *************************/
-router.get('/movies',async function(req,res){
+router.get('/movies',nocache,async function(req,res){
   var moviesData =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
   var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
   if (req.isAuthenticated()) {
@@ -664,7 +672,7 @@ router.get('/movies',async function(req,res){
     );
   }
 })
-router.get('/movies/:path',async function(req,res){
+router.get('/movies/:path',nocache,async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   var genre="action";
@@ -737,7 +745,7 @@ router.get('/movies/:path',async function(req,res){
 });
 
 /*************************  /sports *************************/
-router.get('/sports',async function(req,res){
+router.get('/sports',nocache,async function(req,res){
   var moviesData =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
   var carouselData = await movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
@@ -777,7 +785,7 @@ router.get('/sports',async function(req,res){
     );
   }
 })
-router.get('/sports/:path',async function(req,res){
+router.get('/sports/:path',nocache,async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   var genre="none";
@@ -850,7 +858,7 @@ router.get('/sports/:path',async function(req,res){
 
 
 /*************************  /news *************************/
-router.get('/news',async function(req,res){
+router.get('/news',nocache,async function(req,res){
   var moviesData =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
   var carouselData = await movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
@@ -890,7 +898,7 @@ router.get('/news',async function(req,res){
     );
   }
 })
-router.get('/news/:path',async function(req,res){
+router.get('/news/:path',nocache,async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   var genre="none";
@@ -962,7 +970,7 @@ router.get('/news/:path',async function(req,res){
 });
 
 /*************************  /kids *************************/
-router.get('/cartoons',async function(req,res){
+router.get('/cartoons',nocache,async function(req,res){
   var moviesData =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
   var carouselData = await movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
@@ -1002,7 +1010,7 @@ router.get('/cartoons',async function(req,res){
     );
   }
 })
-router.get('/cartoons/:path',async function(req,res){
+router.get('/cartoons/:path',nocache,async function(req,res){
   const path = req.params.path;
   const data = await movieModel.find({ path: path });
   var genre="comedy";
@@ -1075,7 +1083,7 @@ router.get('/cartoons/:path',async function(req,res){
 
 /************************** /addfavorite **********************/
 
-router.get('/addfavorites/:id',function(req,res){
+router.get('/addfavorites/:id',nocache,function(req,res){
   if (req.isAuthenticated()) {
     const userInfo = req.user;
     var videoId = req.params.id;
@@ -1097,7 +1105,7 @@ router.get('/addfavorites/:id',function(req,res){
 
 /*************************** /getPremium ***********************/
 
-router.get('/getPremium',async function(req,res){
+router.get('/getPremium',nocache,async function(req,res){
   if(req.isAuthenticated()){
     var userId = req.user.id  ;
     console.log(userId); 
@@ -1127,14 +1135,14 @@ router.post('/adminPrimeEditUser',async function(req,res){
 router.get("/login", (req, res) => {
   res.redirect('/');
 });
-router.get("/logout", (req, res) => {
+router.get("/logout",nocache, (req, res) => {
   req.logout();
   res.redirect("/");
 })
 
 /***************************  404 Case Page not found ************/
 //this is for the 404 page
-router.get('*', function(req, res){
+router.get('*',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){
@@ -1164,7 +1172,7 @@ router.get('*', function(req, res){
       });
   }
 });
-router.get('/*', function(req, res){
+router.get('/*',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){
@@ -1195,7 +1203,7 @@ router.get('/*', function(req, res){
   }
   
 });
-router.get('404', function(req, res){
+router.get('404',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
     if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
