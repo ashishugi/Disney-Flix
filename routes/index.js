@@ -229,7 +229,7 @@ router.get('/',nocache,async function(req, res, next) {
         userRecommended = userRecommendedTemp;
     }
 ////////////////////////// End of Machine Computation of Recommendation ////////////////////
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('home', 
       { admin:true,
         user:true,
@@ -289,7 +289,7 @@ router.get('/home/:path',nocache, async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"  || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
@@ -345,7 +345,7 @@ router.get('/userAccount',nocache,async function(req,res){
     const userInfo = req.user;
     var favArray = req.user.favorites;
     var favoriteData = await movieModel.find({_id:{$in:favArray}}).exec(); // Is is for fetching multiple data .
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('userAccount', 
       { admin:true,
         user:true,
@@ -373,7 +373,7 @@ router.get('/userAccount/favlist/del/:id',nocache,async function(req,res){
     var id = req.params.id;
     var userId = req.user.id;
     await User.update({_id:userId},{$pull:{"favorites":id}}).exec(); // It deletes the string from array of string .
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.redirect('back');
     }else{
       var id = req.params.id;
@@ -391,7 +391,7 @@ router.get('/userAccount/favlist/del/:id',nocache,async function(req,res){
 router.get("/admin",nocache,async function(req,res){
   if (req.isAuthenticated()) {
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       var UserData =  User.find({});
       UserData.exec(function(err,data){
         if(err) throw err;
@@ -408,7 +408,7 @@ router.get("/admin",nocache,async function(req,res){
 router.get('/admin/del/:id',nocache,function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       var id = req.params.id;
       var del = User.findByIdAndDelete(id); // It deletes the string from array of string .
       del.exec(function(err,data){
@@ -426,7 +426,7 @@ router.get('/admin/del/:id',nocache,function(req,res){
 router.get('/adminmovies',nocache,async function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       var data =await  movieModel.find({category:"movies"}).sort({ $natural: -1 }).exec();
       res.render('adminVideoCategory',
       {
@@ -445,7 +445,7 @@ router.get('/adminmovies',nocache,async function(req,res){
 router.get('/admin/delVideo/:id',nocache,function(req,res){
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       var id = req.params.id;
       var del = movieModel.findByIdAndDelete(id); // It deletes the string from array of string .
       del.exec(function(err,data){
@@ -463,7 +463,7 @@ router.get('/adminsports',nocache,async function(req,res){
   var data =await  movieModel.find({category:"sports"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -494,7 +494,7 @@ router.get('/adminnews',nocache,async function(req,res){
   var data =await  movieModel.find({category:"news"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -525,7 +525,7 @@ router.get('/admincartoons',nocache,async function(req,res){
   var data =await  movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).exec();
   if (req.isAuthenticated()) {
     userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('adminVideoCategory',
       {
         title:"Movies",
@@ -637,7 +637,7 @@ router.get('/movies',nocache,async function(req,res){
   var carouselData = await movieModel.find({category:"movies"}).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -693,7 +693,7 @@ router.get('/movies/:path',nocache,async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com"|| userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com"){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
@@ -750,7 +750,7 @@ router.get('/sports',nocache,async function(req,res){
   var carouselData = await movieModel.find({category:"sports"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -806,7 +806,7 @@ router.get('/sports/:path',nocache,async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
@@ -863,7 +863,7 @@ router.get('/news',nocache,async function(req,res){
   var carouselData = await movieModel.find({category:"news"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -919,7 +919,7 @@ router.get('/news/:path',nocache,async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
@@ -975,7 +975,7 @@ router.get('/cartoons',nocache,async function(req,res){
   var carouselData = await movieModel.find({category:"cartoons"}).sort({ $natural: -1 }).limit(5).exec();
   if (req.isAuthenticated()) {
     const userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('navbarTabPages', 
       { admin:true,
         user:true,
@@ -1031,7 +1031,7 @@ router.get('/cartoons/:path',nocache,async function(req,res){
         addedToFavList = true;
       }
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.render('playvideo', 
       { admin:true,
         user:true,
@@ -1093,7 +1093,7 @@ router.get('/addfavorites/:id',nocache,function(req,res){
     },function(err,data){
       if(err) throw err;
     })
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){ // checking if it is a Admin
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){ // checking if it is a Admin
       res.redirect('back');
     }else{
       res.redirect('back'); //this will redirect to same page.
@@ -1119,7 +1119,7 @@ router.get('/getPremium',nocache,async function(req,res){
 /********************************** /adminPrimeEditUser ******************/
 router.post('/adminPrimeEditUser',async function(req,res){
   if(req.isAuthenticated()){
-    if(req.user.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){
+    if(req.user.email === "ashishkumarguptacse@gmail.com" ){
       var userId = req.body.id  ;
       var setPrime = req.body.isPrime;
       await User.findByIdAndUpdate({_id:userId}, {isPrime:setPrime}).exec();
@@ -1145,7 +1145,7 @@ router.get("/logout",nocache, (req, res) => {
 router.get('*',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){
         res.render('404',
       {
         admin:true,
@@ -1175,7 +1175,7 @@ router.get('*',nocache, function(req, res){
 router.get('/*',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com"){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){
         res.render('404',
       {
         admin:true,
@@ -1206,7 +1206,7 @@ router.get('/*',nocache, function(req, res){
 router.get('404',nocache, function(req, res){
   if(req.isAuthenticated()){
     var userInfo = req.user;
-    if(userInfo.email === "ashishkumarguptacse@gmail.com" || userInfo.email === "amans271999@gmail.com "){
+    if(userInfo.email === "ashishkumarguptacse@gmail.com" ){
         res.render('404',
       {
         admin:true,
